@@ -944,7 +944,7 @@ interface AudiobookQueueItem {
       audioFilePath: audioPathInput || audioUrl,
       audioPathOrBase64: audioPathInput || audioUrl,
       audioFileName: audioFileName || '',
-      audioDurationSec: audioDuration || 0,
+      audioDurationSec: audioDurationSec || 0,
       bgVideoUrl: bgVideoUrl || bgVideoPathInput,
       themeId: selectedThemeId,
       gradientId: selectedGradientId,
@@ -1272,6 +1272,22 @@ interface AudiobookQueueItem {
         <div className="p-3 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-200 text-xs flex items-center gap-2 shadow-lg animate-fade-in">
           <FolderOpen className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{folderOpenFeedback}</span>
+        </div>
+      )}
+
+      {/* Render Error Alert (Top) */}
+      {renderError && (
+        <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/50 text-rose-200 text-xs flex items-center justify-between shadow-2xl animate-shake">
+          <div className="flex items-center gap-2.5">
+            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+            <span className="font-semibold">{renderError}</span>
+          </div>
+          <button
+            onClick={() => setRenderError(null)}
+            className="p-1 rounded-lg text-slate-400 hover:text-white"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
@@ -3212,14 +3228,34 @@ interface AudiobookQueueItem {
 
             {/* Player Guide Tips */}
             {activePreviewMode === 'video' ? (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-slate-400 px-2 pt-1">
-                <span>💡 Full Screen ဖြင့် အသံဖိုင် အစအဆုံး နားဆင်နိုင်ပြီး Screen Record သို့မဟုတ် Live လွှင့်ရန် အသင့်တော်ဆုံး ဖြစ်ပါသည်။</span>
-                <div className="flex items-center gap-3">
-                  <span className="font-semibold text-amber-300">Loop: 20s Ping-Pong</span>
-                  <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                    Total Audio: {formatDuration(audioDurationSec || 20)}
-                  </span>
+              <div className="space-y-3 px-2 pt-1">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-slate-400">
+                  <span>💡 Full Screen ဖြင့် အသံဖိုင် အစအဆုံး နားဆင်နိုင်ပြီး Screen Record သို့မဟုတ် Live လွှင့်ရန် အသင့်တော်ဆုံး ဖြစ်ပါသည်။</span>
+                  <div className="flex items-center gap-3">
+                    <span className="font-semibold text-amber-300">Loop: 20s Ping-Pong</span>
+                    <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                      Total Audio: {formatDuration(audioDurationSec || 20)}
+                    </span>
+                  </div>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={handleQueueOrStartRender}
+                  className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 via-pink-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-sm shadow-xl shadow-indigo-500/25 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                >
+                  {activeJob ? (
+                    <>
+                      <Plus className="w-4 h-4" />
+                      <span>➕ Queue သို့ နောက်တစ်ခု ထပ်တန်းစီမည် ({queueJobs.length + 1})</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      <span>⚡ Fast Export {resolution.toUpperCase()} MP4 Video</span>
+                    </>
+                  )}
+                </button>
               </div>
             ) : (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-slate-400 px-2 pt-1">
