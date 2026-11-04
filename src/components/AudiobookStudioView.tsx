@@ -898,13 +898,22 @@ interface AudiobookQueueItem {
     }
   }, []);
 
-  // Continuous background poller (1.5s interval) and preset initializer
+  // Continuous background poller (1s during rendering, 1.5s idle) and preset initializer
   useEffect(() => {
     fetchQueueStatus();
     fetchCustomBgPresets();
-    const interval = setInterval(fetchQueueStatus, 1500);
+    const pollInterval = activeJob ? 1000 : 1500;
+    const interval = setInterval(fetchQueueStatus, pollInterval);
     return () => clearInterval(interval);
-  }, [fetchQueueStatus, fetchCustomBgPresets]);
+  }, [fetchQueueStatus, fetchCustomBgPresets, activeJob]);
+
+  // Auto-scroll logs to bottom as new live logs arrive
+  const logsEndRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (logsEndRef.current) {
+      logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [activeJob?.logs?.length]);
 
   // Queue or Start Fast Render (Sequential FIFO background queue)
   const handleQueueOrStartRender = async () => {
@@ -932,7 +941,10 @@ interface AudiobookQueueItem {
       artworkShape,
       artworkWidth,
       logoUrl: logoUrl || logoPathInput,
+      audioFilePath: audioPathInput || audioUrl,
       audioPathOrBase64: audioPathInput || audioUrl,
+      audioFileName: audioFileName || '',
+      audioDurationSec: audioDuration || 0,
       bgVideoUrl: bgVideoUrl || bgVideoPathInput,
       themeId: selectedThemeId,
       gradientId: selectedGradientId,
@@ -3348,6 +3360,7 @@ interface AudiobookQueueItem {
                             </span>
                           </div>
                         ))}
+                        <div ref={logsEndRef} />
                       </div>
                     )}
                   </div>

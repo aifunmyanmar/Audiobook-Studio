@@ -349,6 +349,9 @@ export function audiobookServerPlugin(): Plugin {
         const activeAudiobookJobs: Map<string, AudiobookJobItem> =
           (global as any).__audiobookJobs || ((global as any).__audiobookJobs = new Map());
 
+        // In-memory live active job pointer for real-time log & progress streaming to UI
+        let currentRenderingJob: AudiobookJobItem | null = (globalThis as any).__currentAudiobookJob || null;
+
         const renderCacheDir = path.resolve(process.cwd(), 'data', 'render_cache');
         if (!fs.existsSync(renderCacheDir)) fs.mkdirSync(renderCacheDir, { recursive: true });
 
@@ -431,9 +434,13 @@ export function audiobookServerPlugin(): Plugin {
             if (!job.logs) job.logs = [];
             job.logs.push(entry);
             job.statusMessage = msg;
+            currentRenderingJob = job;
+            (globalThis as any).__currentAudiobookJob = job;
             console.log(`[Audiobook Queue] ${entry}`);
           };
 
+          currentRenderingJob = job;
+          (globalThis as any).__currentAudiobookJob = job;
           appendLog(`Render job started. Target: ${resLabel}. Title: "${job.headerTitle}"`);
           const { renderMedia, selectComposition } = await import('@remotion/renderer');
           const bundleLocation = await getOrCreateBundle();
@@ -448,7 +455,7 @@ export function audiobookServerPlugin(): Plugin {
           // 1. Resolve Audio File Path
           appendLog('Verifying audio file track...');
           let audioFilePath = '';
-          const audioInput = job.audioFilePath || '';
+          const audioInput = (job.audioFilePath || '').trim();
 
           if (audioInput.includes('/api/audiobook/audio-file')) {
             try {
@@ -461,6 +468,15 @@ export function audiobookServerPlugin(): Plugin {
             } catch {}
           }
 
+          if (!audioFilePath && (audioInput.startsWith('/downloads/') || audioInput.includes('/downloads/'))) {
+            try {
+              const urlObj = new URL(audioInput, 'http://localhost');
+              const relPath = urlObj.pathname.replace(/^\//, '');
+              const pubPath = path.resolve(process.cwd(), 'public', relPath);
+              if (fs.existsSync(pubPath)) audioFilePath = pubPath;
+            } catch {}
+          }
+
           if (!audioFilePath) {
             if (audioInput.startsWith('data:audio') || audioInput.startsWith('data:application')) {
               const match = audioInput.match(/^data:([^;]+);base64,(.+)$/);
@@ -470,18 +486,25 @@ export function audiobookServerPlugin(): Plugin {
                 audioFilePath = path.join(tempDir, `audio_${job.id}${ext}`);
                 fs.writeFileSync(audioFilePath, Buffer.from(b64, 'base64'));
               }
-            } else if (audioInput.trim()) {
+            } else if (audioInput) {
               const cleaned = cleanPlatformPath(audioInput);
               if (fs.existsSync(cleaned)) {
                 audioFilePath = cleaned;
               } else if (fs.existsSync(path.resolve(process.cwd(), cleaned))) {
                 audioFilePath = path.resolve(process.cwd(), cleaned);
+              } else {
+                const ytPath = path.join(USER_YT_DOWNLOADS_DIR, path.basename(cleaned));
+                if (fs.existsSync(ytPath)) {
+                  audioFilePath = ytPath;
+                }
               }
             }
           }
 
           if (!audioFilePath || !fs.existsSync(audioFilePath)) {
-            throw new Error('Audio file not found. Please provide a valid audio file or file path.');
+            const debugInfo = audioInput ? `Input was: "${audioInput}"` : 'No audio input provided';
+            appendLog(`❌ Audio file not found. ${debugInfo}`);
+            throw new Error(`Audio file not found (${debugInfo}). Please provide a valid audio file or file path.`);
           }
 
           appendLog(`Audio track verified: ${path.basename(audioFilePath)} (${(fs.statSync(audioFilePath).size / (1024 * 1024)).toFixed(1)} MB)`);
@@ -574,6 +597,8 @@ export function audiobookServerPlugin(): Plugin {
               const remotionProgress = Math.round((encodedFrames / 600) * 50);
               job.progress = 15 + remotionProgress;
               job.statusMessage = `Encoding visual loop: ${encodedFrames}/600 frames (${Math.round((encodedFrames / 600) * 100)}%)...`;
+              currentRenderingJob = job;
+              (globalThis as any).__currentAudiobookJob = job;
               const milestone = Math.floor(encodedFrames / 60) * 10;
               if (milestone > lastLoggedMilestone && milestone <= 100) {
                 lastLoggedMilestone = milestone;
@@ -744,6 +769,8 @@ export function audiobookServerPlugin(): Plugin {
           nextJob.startedAt = Date.now();
           nextJob.progress = 5;
           nextJob.statusMessage = 'Starting rendering...';
+          currentRenderingJob = nextJob;
+          (globalThis as any).__currentAudiobookJob = nextJob;
           saveAudiobookQueue(queue);
 
           activeAudiobookJobs.set(nextJob.id, nextJob);
@@ -767,6 +794,8 @@ export function audiobookServerPlugin(): Plugin {
             saveAudiobookHistory(history.slice(0, 100));
 
             activeAudiobookJobs.set(nextJob.id, nextJob);
+            currentRenderingJob = null;
+            (globalThis as any).__currentAudiobookJob = null;
             (globalThis as any).__isAudiobookQueueProcessing = false;
 
             setTimeout(() => {
@@ -807,7 +836,8 @@ export function audiobookServerPlugin(): Plugin {
               const payload = JSON.parse(body || '{}');
               const jobId = `audiobook_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
               const headerTitle = payload.headerTitle || 'Audiobook';
-              const cleanTitle = headerTitle.replace(/[\r\n]+/g, ' ').trim();
+              const rawAudio = payload.audioFilePath || payload.audioPathOrBase64 || payload.audioUrl || payload.audioPathInput || '';
+              const audioFilePath = typeof rawAudio === 'string' ? rawAudio.trim() : '';
 
               const newJob: AudiobookJobItem = {
                 id: jobId,
@@ -816,7 +846,7 @@ export function audiobookServerPlugin(): Plugin {
                 authorName: payload.authorName,
                 episodeText: payload.episodeText,
                 resolution: payload.resolution || '1080p',
-                audioFilePath: payload.audioFilePath,
+                audioFilePath: audioFilePath,
                 audioFileName: payload.audioFileName,
                 audioDurationSec: payload.audioDurationSec,
                 artworkUrl: payload.artworkUrl,
@@ -897,7 +927,13 @@ export function audiobookServerPlugin(): Plugin {
         // GET /api/audiobook/queue-status
         if (url?.startsWith('/api/audiobook/queue-status') && req.method === 'GET') {
           const queue = getAudiobookQueue();
-          const activeJob = queue.find(j => j.status === 'rendering') || null;
+          let activeJob = (globalThis as any).__currentAudiobookJob || currentRenderingJob;
+          if (!activeJob) {
+            activeJob = Array.from(activeAudiobookJobs.values()).find(j => j.status === 'rendering') || null;
+          }
+          if (!activeJob) {
+            activeJob = queue.find(j => j.status === 'rendering') || null;
+          }
           const pendingJobs = queue.filter(j => j.status === 'pending');
           const history = getAudiobookHistory();
 
