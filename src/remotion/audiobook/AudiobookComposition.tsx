@@ -10,10 +10,7 @@ import { ArtworkHeroCard } from './ArtworkHeroCard';
 import { AudioWaveformVisualizer } from './AudioWaveformVisualizer';
 import {
   FeatherPenIcon,
-  HeadphonesIcon,
   FlameIcon,
-  ZapIcon,
-  DiscIcon,
   BookOpenIcon,
 } from './icons';
 
@@ -588,27 +585,8 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                 boxSizing: 'border-box',
               }}
             >
-              {/* Top: Genre badge + Episode tag */}
+              {/* Top: Logo + Episode tag */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 20px',
-                    borderRadius: '999px',
-                    background: 'rgba(15, 23, 42, 0.88)',
-                    border: `1.5px solid ${theme.accentColor}`,
-                    color: '#94a3b8',
-                    fontSize: '13px',
-                    fontWeight: 800,
-                    letterSpacing: '0.12em',
-                  }}
-                >
-                  <HeadphonesIcon size={16} color={theme.accentColor} />
-                  <span>FULL AUDIOBOOK</span>
-                </div>
-
                 {resolvedLogo && (
                   <img
                     src={resolvedLogo}
@@ -738,26 +716,7 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
             >
               {resolvedLogo ? (
                 <img src={resolvedLogo} alt="Logo" style={{ height: '36px', borderRadius: '6px' }} />
-              ) : (
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 20px',
-                    borderRadius: '999px',
-                    background: 'rgba(15, 23, 42, 0.88)',
-                    border: '1.5px solid rgba(255,255,255,0.22)',
-                    fontSize: '13px',
-                    fontWeight: 800,
-                    letterSpacing: '0.1em',
-                    color: '#94a3b8',
-                  }}
-                >
-                  <HeadphonesIcon size={16} color={theme.accentColor} />
-                  <span>AUDIOBOOK PRO STUDIO</span>
-                </div>
-              )}
+              ) : <div />}
 
               {episodeText && (
                 <div
@@ -981,36 +940,15 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                 boxSizing: 'border-box',
               }}
             >
-              {/* Top: Genre badge + Episode tag */}
+              {/* Top: Logo + Episode tag */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '8px 20px',
-                      borderRadius: '999px',
-                      background: 'rgba(30, 41, 59, 0.90)',
-                      border: '1px solid rgba(255,255,255,0.22)',
-                      fontSize: '13px',
-                      fontWeight: 800,
-                      letterSpacing: '0.1em',
-                      color: '#94a3b8',
-                    }}
-                  >
-                    <DiscIcon size={16} color={theme.accentColor} />
-                    <span>HIGH FIDELITY AUDIO NOVEL</span>
-                  </div>
-
-                  {resolvedLogo && (
-                    <img
-                      src={resolvedLogo}
-                      alt="Logo"
-                      style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
-                    />
-                  )}
-                </div>
+                {resolvedLogo ? (
+                  <img
+                    src={resolvedLogo}
+                    alt="Logo"
+                    style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
+                  />
+                ) : <div />}
 
                 {episodeText && (
                   <div
@@ -1136,25 +1074,7 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '6px 16px',
-                    borderRadius: '6px',
-                    background: 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
-                    border: '1px solid #ef4444',
-                    color: '#ffffff',
-                    fontSize: '13px',
-                    fontWeight: 900,
-                    letterSpacing: '0.12em',
-                  }}
-                >
-                  <ZapIcon size={14} color="#ffffff" />
-                  <span>DRAMATIC AUDIO BROADCAST</span>
-                </div>
-                {resolvedLogo && <img src={resolvedLogo} alt="Logo" style={{ height: '32px' }} />}
+                {resolvedLogo ? <img src={resolvedLogo} alt="Logo" style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }} /> : <div />}
               </div>
 
               {episodeText && (

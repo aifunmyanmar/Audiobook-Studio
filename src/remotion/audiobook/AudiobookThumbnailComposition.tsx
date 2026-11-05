@@ -7,12 +7,8 @@ import {
   HeadphonesIcon,
   FlameIcon,
   StarIcon,
-  ZapIcon,
   BookOpenIcon,
-  CrownIcon,
   CheckCircleIcon,
-  RadioIcon,
-  SwordIcon,
 } from './icons';
 
 export type AudiobookThumbnailLayoutId =
@@ -324,21 +320,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 boxSizing: 'border-box',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: 800,
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
-                    color: '#94a3b8',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                  }}
-                >
-                  <HeadphonesIcon size={16} color="#94a3b8" /> AUDIOBOOK SPECIAL
-                </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                 {episodeText && (
                   <div
                     style={{
@@ -865,24 +847,19 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  alignItems: 'center',
                   gap: '10px',
-                  padding: '20px 28px',
+                  padding: '16px 26px',
                   borderRadius: '22px',
                   background: authorBgColor || 'rgba(15, 23, 42, 0.90)',
                   border: '1.5px solid rgba(255,255,255,0.2)',
                   maxWidth: '520px',
                 }}
               >
-                <span style={{ fontSize: '14px', fontWeight: 800, color: '#94a3b8', letterSpacing: '0.1em' }}>
-                  မြန်မာ အသံထွက်ဝတ္ထုရှည်
+                <FeatherPenIcon size={22} color={authorColor} />
+                <span style={{ fontSize: `${authorFontSize || 28}px`, fontWeight: 800, color: authorColor }}>
+                  {authorName}
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <FeatherPenIcon size={22} color={authorColor} />
-                  <span style={{ fontSize: `${authorFontSize || 28}px`, fontWeight: 800, color: authorColor }}>
-                    {authorName}
-                  </span>
-                </div>
               </div>
 
               <div style={{ transform: 'scale(0.95)', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.9))' }}>
@@ -946,27 +923,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 18px',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
-                    border: '1.5px solid rgba(239, 68, 68, 0.8)',
-                    boxShadow: '0 0 25px rgba(239, 68, 68, 0.6), 0 4px 12px rgba(0,0,0,0.8)',
-                    color: '#ffffff',
-                    fontSize: '14px',
-                    fontWeight: 900,
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  <ZapIcon size={15} color="#ffffff" />
-                  <span>ACTION / THRILLER</span>
-                </div>
-
                 {episodeText && (
                   <div
                     style={{
@@ -1156,26 +1112,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
             >
               {/* Badges Row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '7px 18px',
-                    borderRadius: '999px',
-                    background: 'rgba(6, 182, 212, 0.15)',
-                    border: '1.5px solid #06b6d4',
-                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)',
-                    color: '#67e8f9',
-                    fontSize: '13px',
-                    fontWeight: 900,
-                    letterSpacing: '0.12em',
-                  }}
-                >
-                  <ZapIcon size={15} color="#06b6d4" />
-                  <span>NEON CYBER EDITION</span>
-                </div>
-
                 {episodeText && (
                   <div
                     style={{
@@ -1318,26 +1254,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
             >
               {/* Royal Badge */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 20px',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #78350f 0%, #451a03 100%)',
-                    border: '1.5px solid #f59e0b',
-                    boxShadow: '0 0 20px rgba(245, 158, 11, 0.4)',
-                    color: '#fef08a',
-                    fontSize: '13px',
-                    fontWeight: 900,
-                    letterSpacing: '0.12em',
-                  }}
-                >
-                  <CrownIcon size={16} color="#f59e0b" />
-                  <span>ROYAL MYANMAR CLASSIC</span>
-                </div>
-
                 {episodeText && (
                   <div
                     style={{
@@ -1469,28 +1385,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 overflow: 'hidden',
               }}
             >
-              {/* Badge */}
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '7px 20px',
-                  borderRadius: '999px',
-                  background: 'rgba(239, 68, 68, 0.25)',
-                  border: '1.5px solid #ef4444',
-                  boxShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
-                  color: '#ffffff',
-                  fontSize: '13px',
-                  fontWeight: 900,
-                  letterSpacing: '0.12em',
-                  width: 'fit-content',
-                }}
-              >
-                <FlameIcon size={16} color="#ef4444" />
-                <span>HOT RELEASE AUDIOBOOK</span>
-              </div>
-
               {/* Bold Title */}
               <h1
                 style={{
@@ -1617,28 +1511,8 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 zIndex: 10,
               }}
             >
-              {/* Studio Masterclass Header Bar */}
+              {/* Header Bar */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '7px 20px',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-                    border: '1.5px solid #38bdf8',
-                    boxShadow: '0 0 20px rgba(56, 189, 248, 0.5)',
-                    color: '#ffffff',
-                    fontSize: '13px',
-                    fontWeight: 900,
-                    letterSpacing: '0.12em',
-                  }}
-                >
-                  <RadioIcon size={16} color="#ffffff" />
-                  <span>STUDIO MASTERCLASS EDITION</span>
-                </div>
-
                 {episodeText && (
                   <div
                     style={{
@@ -1810,26 +1684,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
             >
               {/* Badges Row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 20px',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%)',
-                    border: '1.5px solid #ef4444',
-                    boxShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
-                    color: '#fca5a5',
-                    fontSize: '13px',
-                    fontWeight: 900,
-                    letterSpacing: '0.12em',
-                  }}
-                >
-                  <SwordIcon size={16} color="#ef4444" />
-                  <span>NOIR SUSPENSE / MYSTERY</span>
-                </div>
-
                 {episodeText && (
                   <div
                     style={{
