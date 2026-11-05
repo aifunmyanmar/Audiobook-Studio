@@ -27,6 +27,7 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
   artworkShape = 'book-cover',
   artworkWidth = 420,
   logoUrl,
+  logoSize = 70,
   audioUrl,
   bgVideoUrl,
   themeId = 'horror-halloween',
@@ -130,17 +131,17 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '12px',
-                  padding: '8px 20px',
+                  padding: `${Math.max(6, Math.round(logoSize * 0.12))}px ${Math.max(16, Math.round(logoSize * 0.25))}px`,
                   borderRadius: '999px',
                   background: 'rgba(15, 23, 42, 0.88)',
-                  border: '1px solid rgba(255, 255, 255, 0.20)',
+                  border: '1.5px solid rgba(255, 255, 255, 0.22)',
                   boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
                 }}
               >
                 <img
                   src={resolvedLogo}
                   alt="Logo"
-                  style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
+                  style={{ height: `${logoSize}px`, maxWidth: `${Math.round(logoSize * 2.8)}px`, objectFit: 'contain', borderRadius: '8px' }}
                 />
               </div>
             )}
@@ -331,17 +332,17 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '12px',
-                  padding: '8px 20px',
+                  padding: `${Math.max(6, Math.round(logoSize * 0.12))}px ${Math.max(16, Math.round(logoSize * 0.25))}px`,
                   borderRadius: '999px',
                   background: 'rgba(15, 23, 42, 0.88)',
-                  border: '1.5px solid rgba(255, 255, 255, 0.20)',
+                  border: '1.5px solid rgba(255, 255, 255, 0.22)',
                   boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
                 }}
               >
                 <img
                   src={resolvedLogo}
                   alt="Logo"
-                  style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
+                  style={{ height: `${logoSize}px`, maxWidth: `${Math.round(logoSize * 2.8)}px`, objectFit: 'contain', borderRadius: '8px' }}
                 />
               </div>
             )}
@@ -591,7 +592,7 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                   <img
                     src={resolvedLogo}
                     alt="Logo"
-                    style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
+                    style={{ height: `${logoSize}px`, maxWidth: `${Math.round(logoSize * 2.8)}px`, objectFit: 'contain', borderRadius: '8px' }}
                   />
                 )}
 
@@ -715,7 +716,11 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               }}
             >
               {resolvedLogo ? (
-                <img src={resolvedLogo} alt="Logo" style={{ height: '36px', borderRadius: '6px' }} />
+                <img
+                  src={resolvedLogo}
+                  alt="Logo"
+                  style={{ height: `${logoSize}px`, maxWidth: `${Math.round(logoSize * 2.8)}px`, objectFit: 'contain', borderRadius: '8px' }}
+                />
               ) : <div />}
 
               {episodeText && (
@@ -946,7 +951,7 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                   <img
                     src={resolvedLogo}
                     alt="Logo"
-                    style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
+                    style={{ height: `${logoSize}px`, maxWidth: `${Math.round(logoSize * 2.8)}px`, objectFit: 'contain', borderRadius: '8px' }}
                   />
                 ) : <div />}
 
@@ -1074,7 +1079,13 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                {resolvedLogo ? <img src={resolvedLogo} alt="Logo" style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }} /> : <div />}
+                {resolvedLogo ? (
+                  <img
+                    src={resolvedLogo}
+                    alt="Logo"
+                    style={{ height: `${Math.min(logoSize, 60)}px`, maxWidth: `${Math.round(logoSize * 2.8)}px`, objectFit: 'contain', borderRadius: '8px' }}
+                  />
+                ) : <div />}
               </div>
 
               {episodeText && (

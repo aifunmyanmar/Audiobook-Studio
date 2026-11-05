@@ -180,6 +180,7 @@ export function audiobookServerPlugin(): Plugin {
           artworkShape?: string;
           artworkWidth?: number;
           logoUrl?: string;
+          logoSize?: number;
           bgVideoUrl?: string;
           themeId: string;
           gradientId?: string;
@@ -579,6 +580,7 @@ export function audiobookServerPlugin(): Plugin {
               artworkShape: (job.artworkShape as any) || 'book-cover',
               artworkWidth: Number(job.artworkWidth) || 420,
               logoUrl: cachedLogoUrl,
+              logoSize: Number(job.logoSize) || 70,
               bgVideoUrl: job.bgVideoUrl,
               themeId: (job.themeId as any) || 'horror-halloween',
               gradientId: job.gradientId,
@@ -651,6 +653,7 @@ export function audiobookServerPlugin(): Plugin {
               artworkShape: (job.artworkShape as any) || 'book-cover',
               artworkWidth: Number(job.artworkWidth) || 420,
               logoUrl: cachedLogoUrl,
+              logoSize: Number(job.logoSize) || 70,
               bgVideoUrl: job.bgVideoUrl,
               themeId: (job.themeId as any) || 'horror-halloween',
               gradientId: job.gradientId,
@@ -911,6 +914,7 @@ export function audiobookServerPlugin(): Plugin {
                 artworkShape: payload.artworkShape,
                 artworkWidth: payload.artworkWidth,
                 logoUrl: payload.logoUrl,
+                logoSize: payload.logoSize || 70,
                 bgVideoUrl: payload.bgVideoUrl,
                 themeId: payload.themeId || 'horror-halloween',
                 gradientId: payload.gradientId,

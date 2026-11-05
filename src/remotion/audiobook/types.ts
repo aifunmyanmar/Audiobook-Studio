@@ -314,6 +314,7 @@ export interface AudiobookProps {
   artworkShape?: 'book-cover' | 'circle' | 'square';
   artworkWidth?: number;
   logoUrl?: string;
+  logoSize?: number;
   audioUrl?: string;
   bgVideoUrl?: string;
   themeId?: AudiobookThemeId;

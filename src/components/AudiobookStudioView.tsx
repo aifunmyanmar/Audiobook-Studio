@@ -101,6 +101,7 @@ interface SavedAudiobookSettings {
   artworkUrl?: string;
   logoPathInput?: string;
   logoUrl?: string;
+  logoSize?: number;
   audioPathInput?: string;
   selectedGradientId?: string;
   selectedThemeId?: AudiobookThemeId;
@@ -199,6 +200,7 @@ export const AudiobookStudioView: React.FC<AudiobookStudioViewProps> = ({ onBack
   // 3. Brand Logo states
   const [logoUrl, setLogoUrl] = useState<string>(initialSettings.logoUrl ?? '');
   const [logoPathInput, setLogoPathInput] = useState<string>(initialSettings.logoPathInput ?? '');
+  const [logoSize, setLogoSize] = useState<number>(initialSettings.logoSize ?? 70);
   const logoFileInputRef = useRef<HTMLInputElement>(null);
 
   // 4. Audio states
@@ -426,6 +428,7 @@ interface AudiobookQueueItem {
         artworkUrl: (artworkUrl.startsWith('data:') || artworkUrl.startsWith('blob:')) ? '' : artworkUrl,
         logoPathInput,
         logoUrl: (logoUrl.startsWith('data:') || logoUrl.startsWith('blob:')) ? '' : logoUrl,
+        logoSize,
         audioPathInput: (audioPathInput.startsWith('data:') || audioPathInput.startsWith('blob:')) ? '' : audioPathInput,
         selectedGradientId,
         selectedThemeId,
@@ -476,6 +479,7 @@ interface AudiobookQueueItem {
     artworkUrl,
     logoPathInput,
     logoUrl,
+    logoSize,
     audioPathInput,
     selectedGradientId,
     selectedThemeId,
@@ -1019,6 +1023,7 @@ interface AudiobookQueueItem {
       artworkShape,
       artworkWidth,
       logoUrl: logoUrl || logoPathInput,
+      logoSize,
       audioFilePath: audioPathInput || audioUrl,
       audioPathOrBase64: audioPathInput || audioUrl,
       audioFileName: audioFileName || '',
@@ -2534,6 +2539,28 @@ interface AudiobookQueueItem {
                   </button>
                 )}
               </div>
+
+              {/* Logo Size Slider */}
+              <div className="space-y-1.5 pt-2 border-t border-slate-800/60 mt-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-400 font-medium">Logo Height / Scale:</span>
+                  <span className="font-mono text-indigo-400 font-bold">{logoSize}px</span>
+                </div>
+                <input
+                  type="range"
+                  min={32}
+                  max={180}
+                  step={2}
+                  value={logoSize}
+                  onChange={(e) => setLogoSize(Number(e.target.value))}
+                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400">
+                  <span>32px (Small)</span>
+                  <span>70px (Medium)</span>
+                  <span>180px (Large)</span>
+                </div>
+              </div>
             </div>
             </div>
             )}
@@ -3461,6 +3488,7 @@ interface AudiobookQueueItem {
                   artworkShape,
                   artworkWidth,
                   logoUrl,
+                  logoSize,
                   audioUrl,
                   bgVideoUrl,
                   themeId: selectedThemeId,
