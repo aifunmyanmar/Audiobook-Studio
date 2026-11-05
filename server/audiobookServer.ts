@@ -38,6 +38,7 @@ export function getFfprobePath(): string {
       ]
     : [
         'ffprobe',
+        path.join(process.cwd(), 'bin', 'ffprobe'),
         '/opt/homebrew/bin/ffprobe',
         '/usr/local/bin/ffprobe',
         '/usr/bin/ffprobe',
@@ -62,6 +63,7 @@ export function getFfmpegPath(): string {
       ]
     : [
         'ffmpeg',
+        path.join(process.cwd(), 'bin', 'ffmpeg'),
         '/opt/homebrew/bin/ffmpeg',
         '/usr/local/bin/ffmpeg',
         '/usr/bin/ffmpeg',
@@ -85,6 +87,7 @@ export function getYtDlpPath(): string {
       ]
     : [
         'yt-dlp',
+        path.join(process.cwd(), 'bin', 'yt-dlp'),
         '/opt/homebrew/bin/yt-dlp',
         '/usr/local/bin/yt-dlp',
         path.join(os.homedir(), 'Library/Python/3.9/bin/yt-dlp'),
