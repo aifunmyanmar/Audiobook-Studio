@@ -57,21 +57,21 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
 
   // Resolve logo URL
   const resolvedLogo = logoUrl
-    ? logoUrl.startsWith('data:') || logoUrl.startsWith('http') || logoUrl.startsWith('blob:') || logoUrl.startsWith('/api/')
+    ? logoUrl.startsWith('data:') || logoUrl.startsWith('http') || logoUrl.startsWith('blob:') || logoUrl.startsWith('/')
       ? logoUrl
       : staticFile(logoUrl.replace(/^\//, ''))
     : null;
 
   // Resolve audio URL
   const resolvedAudio = audioUrl
-    ? audioUrl.startsWith('data:') || audioUrl.startsWith('http') || audioUrl.startsWith('blob:') || audioUrl.startsWith('/api/')
+    ? audioUrl.startsWith('data:') || audioUrl.startsWith('http') || audioUrl.startsWith('blob:') || audioUrl.startsWith('/')
       ? audioUrl
       : staticFile(audioUrl.replace(/^\//, ''))
     : null;
 
   // Resolved Artwork URL
   const resolvedArtwork = artworkUrl
-    ? artworkUrl.startsWith('data:') || artworkUrl.startsWith('http') || artworkUrl.startsWith('blob:') || artworkUrl.startsWith('/api/')
+    ? artworkUrl.startsWith('data:') || artworkUrl.startsWith('http') || artworkUrl.startsWith('blob:') || artworkUrl.startsWith('/')
       ? artworkUrl
       : staticFile(artworkUrl.replace(/^\//, ''))
     : null;
@@ -318,48 +318,77 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
 
         {/* ======================================================== */}
         {/* COMPOSITION 2: CENTER STAGE SPOTLIGHT (Prominent Artwork) */}
+        {/* Layout: Top title bar → Center artwork image → Bottom author/waveform console */}
+        {/* All in an absolute positioned flex-column, fully bounded within 1920×1080 */}
         {/* ======================================================== */}
         {videoCompositionId === 'video-comp-2-center-stage' && (
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '45px 80px 45px 80px',
-              zIndex: 30,
-              boxSizing: 'border-box',
-            }}
-          >
-            {/* Top Marquee Header Card */}
+          <>
+            {/* Top Brand Logo */}
+            {resolvedLogo && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '40px',
+                  left: '80px',
+                  zIndex: 50,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '8px 20px',
+                  borderRadius: '999px',
+                  background: 'rgba(15, 23, 42, 0.88)',
+                  border: '1.5px solid rgba(255, 255, 255, 0.20)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                <img
+                  src={resolvedLogo}
+                  alt="Logo"
+                  style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
+                />
+              </div>
+            )}
             <div
               style={{
-                width: '100%',
-                maxWidth: '1280px',
-                textAlign: 'center',
-                padding: '20px 40px',
-                borderRadius: '26px',
-                background: 'rgba(15, 23, 42, 0.88)',
-                border: '1.5px solid rgba(255, 255, 255, 0.18)',
-                boxShadow: '0 16px 45px rgba(0,0,0,0.7)',
+                position: 'absolute',
+                top: 0, left: 0, right: 0, bottom: 0,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '6px',
+                justifyContent: 'space-between',
+                padding: '48px 80px',
+                zIndex: 30,
+                boxSizing: 'border-box',
+              }}
+            >
+            {/* ── Top Title + Subtitle Header Card (fixed ~130px) ── */}
+            <div
+              style={{
+                width: '100%',
+                maxWidth: '1300px',
+                textAlign: 'center',
+                padding: '22px 48px',
+                borderRadius: '28px',
+                background: 'rgba(15, 23, 42, 0.90)',
+                border: '1.5px solid rgba(255, 255, 255, 0.20)',
+                boxShadow: '0 16px 50px rgba(0,0,0,0.75)',
+                boxSizing: 'border-box',
+                flexShrink: 0,
               }}
             >
               <h1
                 style={{
                   fontFamily: "'PannYeat', 'Padauk', sans-serif",
-                  fontSize: `${headerFontSize || 68}px`,
+                  fontSize: `${Math.min(headerFontSize || 66, 72)}px`,
                   fontWeight: 800,
                   color: titleColor,
                   lineHeight: '1.3',
                   margin: 0,
-                  textShadow: '0 4px 20px rgba(0,0,0,0.95)',
+                  textShadow: '0 4px 22px rgba(0,0,0,0.98)',
                   whiteSpace: 'pre-line',
+                  wordBreak: 'break-word',
+                  overflow: 'hidden',
+                  maxHeight: '100px',
                 }}
               >
                 {headerTitle}
@@ -368,10 +397,12 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                 <p
                   style={{
                     fontFamily: "'PannYeat', 'Padauk', sans-serif",
-                    fontSize: `${subheaderFontSize || 26}px`,
+                    fontSize: `${Math.min(subheaderFontSize || 26, 30)}px`,
                     fontWeight: 600,
                     color: subTitleColor,
-                    margin: 0,
+                    margin: '8px 0 0 0',
+                    overflow: 'hidden',
+                    maxHeight: '44px',
                   }}
                 >
                   {subheader}
@@ -379,54 +410,90 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               )}
             </div>
 
-            {/* Middle Centerpiece 3D Floating Artwork */}
+            {/* ── Center Artwork: flex:1 container, artwork image centered, max height 540px ── */}
             <div
               style={{
-                transform: 'scale(0.95)',
-                filter: `drop-shadow(0 25px 50px rgba(0,0,0,0.95)) drop-shadow(0 0 45px ${theme.accentColor}55)`,
-                margin: '10px 0',
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '20px 0',
+                overflow: 'hidden',
               }}
             >
-              <ArtworkHeroCard
-                artworkUrl={artworkUrl}
-                shape={artworkShape}
-                artworkWidth={390}
-                title={headerTitle}
-                authorName={authorName}
-                accentColor={theme.accentColor}
-                loopDurationFrames={loopDurationFrames}
-              />
+              {resolvedArtwork ? (
+                <img
+                  src={resolvedArtwork}
+                  alt="Cover"
+                  style={{
+                    maxHeight: '520px',
+                    maxWidth: '380px',
+                    width: 'auto',
+                    height: 'auto',
+                    borderRadius: artworkShape === 'circle' ? '50%' : artworkShape === 'square' ? '20px' : '16px',
+                    objectFit: 'cover',
+                    boxShadow: `0 30px 80px rgba(0,0,0,0.95), 0 0 60px ${theme.accentColor}44`,
+                    border: '2px solid rgba(255,255,255,0.18)',
+                    filter: `drop-shadow(0 0 40px ${theme.accentColor}55)`,
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: '340px',
+                    height: '480px',
+                    borderRadius: '20px',
+                    background: 'linear-gradient(145deg, #1e1b4b 0%, #0f172a 60%, #020617 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: `0 25px 60px rgba(0,0,0,0.9), 0 0 50px ${theme.accentColor}33`,
+                    border: '1.5px solid rgba(255,255,255,0.15)',
+                  }}
+                >
+                  <BookOpenIcon size={72} color={theme.accentColor} />
+                </div>
+              )}
             </div>
 
-            {/* Bottom Symphony Console: Author, Wide Visualizer, Episode Badge */}
+            {/* ── Bottom Console: Author + Wide Waveform + Episode Badge (fixed ~90px) ── */}
             <div
               style={{
                 width: '100%',
-                maxWidth: '1360px',
+                maxWidth: '1380px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: '24px',
-                padding: '14px 28px',
-                borderRadius: '24px',
-                background: 'rgba(15, 23, 42, 0.90)',
-                border: '1.5px solid rgba(255, 255, 255, 0.18)',
-                boxShadow: '0 16px 45px rgba(0,0,0,0.7)',
+                gap: '28px',
+                padding: '18px 32px',
+                borderRadius: '26px',
+                background: 'rgba(15, 23, 42, 0.92)',
+                border: '1.5px solid rgba(255, 255, 255, 0.20)',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
+                boxSizing: 'border-box',
+                flexShrink: 0,
               }}
             >
               {authorName ? (
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
                   <FeatherPenIcon size={20} color={authorCol} />
-                  <span style={{ fontSize: `${authorFontSize}px`, fontWeight: 700, color: authorCol }}>
+                  <span
+                    style={{
+                      fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                      fontSize: `${authorFontSize || 24}px`,
+                      fontWeight: 700,
+                      color: authorCol,
+                      lineHeight: '1.4',
+                    }}
+                  >
                     {authorName}
                   </span>
                 </div>
               ) : <div />}
 
-              {/* Wide Panoramic Audio Waveform */}
-              <div style={{ flex: 1, maxWidth: '800px' }}>
+              <div style={{ flex: 1, maxWidth: '840px' }}>
                 <AudioWaveformVisualizer
-                  barCount={64}
+                  barCount={68}
                   accentColor={theme.accentColor}
                   secondaryColor={theme.secondaryColor}
                   loopDurationFrames={loopDurationFrames}
@@ -436,14 +503,15 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               {episodeText && (
                 <div
                   style={{
-                    padding: '8px 24px',
+                    padding: '10px 26px',
                     borderRadius: '999px',
                     background: epBgCol,
                     color: epTextCol,
-                    fontSize: `${episodeFontSize}px`,
+                    fontSize: `${episodeFontSize || 18}px`,
                     fontWeight: 800,
                     border: `1.5px solid ${theme.accentColor}`,
                     flexShrink: 0,
+                    lineHeight: '1.4',
                   }}
                 >
                   {episodeText}
@@ -451,132 +519,25 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               )}
             </div>
           </div>
+          </>
         )}
 
         {/* ======================================================== */}
         {/* COMPOSITION 3: CINEMATIC FULL-BLEED HERO (Right Full Artwork) */}
+        {/* Layout: Right side = full-height artwork image (900px wide, absolute).  */}
+        {/* Left side = text column (980px wide, absolute), flex column.            */}
+        {/* Both are absolutely positioned siblings inside a 1920×1080 container.  */}
         {/* ======================================================== */}
         {videoCompositionId === 'video-comp-3-cinematic-wide' && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 30 }}>
-            {/* Left High-Impact Text & Visualizer Column (52%) */}
-            <div
-              style={{
-                width: '52%',
-                height: '100%',
-                padding: '90px 60px 80px 90px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                background: 'linear-gradient(to right, rgba(15,23,42,0.98) 65%, rgba(15,23,42,0.7) 90%, transparent 100%)',
-                zIndex: 2,
-                boxSizing: 'border-box',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 20px',
-                    borderRadius: '999px',
-                    background: 'rgba(15, 23, 42, 0.85)',
-                    border: `1.5px solid ${theme.accentColor}`,
-                    color: '#94a3b8',
-                    fontSize: '13px',
-                    fontWeight: 800,
-                    letterSpacing: '0.12em',
-                  }}
-                >
-                  <HeadphonesIcon size={16} color={theme.accentColor} />
-                  <span>FULL AUDIOBOOK MASTER</span>
-                </div>
-
-                {episodeText && (
-                  <div
-                    style={{
-                      padding: '8px 24px',
-                      borderRadius: '999px',
-                      background: epBgCol,
-                      color: epTextCol,
-                      fontSize: `${episodeFontSize}px`,
-                      fontWeight: 800,
-                      border: '1.5px solid rgba(255,255,255,0.2)',
-                    }}
-                  >
-                    {episodeText}
-                  </div>
-                )}
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <h1
-                  style={{
-                    fontFamily: "'PannYeat', 'Padauk', sans-serif",
-                    fontSize: `${headerFontSize || 74}px`,
-                    lineHeight: '1.26',
-                    fontWeight: 900,
-                    color: titleColor,
-                    margin: 0,
-                    textShadow: '0 4px 25px rgba(0,0,0,1)',
-                    whiteSpace: 'pre-line',
-                  }}
-                >
-                  {headerTitle}
-                </h1>
-                {subheader && (
-                  <p
-                    style={{
-                      fontFamily: "'PannYeat', 'Padauk', sans-serif",
-                      fontSize: `${subheaderFontSize || 28}px`,
-                      fontWeight: 600,
-                      color: subTitleColor,
-                      margin: 0,
-                    }}
-                  >
-                    {subheader}
-                  </p>
-                )}
-              </div>
-
-              {authorName && (
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '10px 24px',
-                    borderRadius: '16px',
-                    background: authorBgColor || 'rgba(30,41,59,0.90)',
-                    border: '1.5px solid rgba(255,255,255,0.25)',
-                    width: 'fit-content',
-                  }}
-                >
-                  <FeatherPenIcon size={20} color={authorCol} />
-                  <span style={{ fontSize: `${authorFontSize || 24}px`, fontWeight: 700, color: authorCol }}>
-                    {authorName}
-                  </span>
-                </div>
-              )}
-
-              <div style={{ width: '100%', maxWidth: '640px' }}>
-                <AudioWaveformVisualizer
-                  barCount={52}
-                  accentColor={theme.accentColor}
-                  secondaryColor={theme.secondaryColor}
-                  loopDurationFrames={loopDurationFrames}
-                />
-              </div>
-            </div>
-
-            {/* Right Massive Artwork Presentation (48%) */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 30 }}>
+            {/* Right: Full-bleed artwork panel (absolute, right-aligned, 900px wide) */}
             <div
               style={{
                 position: 'absolute',
                 top: 0,
                 right: 0,
-                width: '48%',
-                height: '100%',
+                width: '900px',
+                height: '1080px',
                 overflow: 'hidden',
                 zIndex: 1,
               }}
@@ -598,27 +559,172 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                     justifyContent: 'center',
                   }}
                 >
-                  <BookOpenIcon size={64} color="#64748b" />
+                  <BookOpenIcon size={80} color="#64748b" />
                 </div>
               )}
-              {/* Soft Leftward Vignette Fade */}
+              {/* Fade to left so text is readable */}
               <div
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(to left, transparent 25%, rgba(15,23,42,0.98) 100%)',
+                  background: 'linear-gradient(to left, transparent 20%, rgba(15,23,42,0.85) 70%, rgba(15,23,42,0.99) 100%)',
                 }}
               />
+            </div>
+
+            {/* Left: Text + waveform column (absolute, left-aligned, 1060px wide) */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '1060px',
+                height: '1080px',
+                padding: '90px 60px 80px 90px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                zIndex: 2,
+                boxSizing: 'border-box',
+              }}
+            >
+              {/* Top: Genre badge + Episode tag */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 20px',
+                    borderRadius: '999px',
+                    background: 'rgba(15, 23, 42, 0.88)',
+                    border: `1.5px solid ${theme.accentColor}`,
+                    color: '#94a3b8',
+                    fontSize: '13px',
+                    fontWeight: 800,
+                    letterSpacing: '0.12em',
+                  }}
+                >
+                  <HeadphonesIcon size={16} color={theme.accentColor} />
+                  <span>FULL AUDIOBOOK</span>
+                </div>
+
+                {resolvedLogo && (
+                  <img
+                    src={resolvedLogo}
+                    alt="Logo"
+                    style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
+                  />
+                )}
+
+                {episodeText && (
+                  <div
+                    style={{
+                      padding: '8px 24px',
+                      borderRadius: '999px',
+                      background: epBgCol,
+                      color: epTextCol,
+                      fontSize: `${episodeFontSize || 18}px`,
+                      fontWeight: 800,
+                      border: '1.5px solid rgba(255,255,255,0.22)',
+                      lineHeight: '1.4',
+                    }}
+                  >
+                    {episodeText}
+                  </div>
+                )}
+              </div>
+
+              {/* Middle: Title + Subtitle (flex:1 content) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: 1, justifyContent: 'center', padding: '30px 0' }}>
+                <h1
+                  style={{
+                    fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                    fontSize: `${headerFontSize || 76}px`,
+                    lineHeight: '1.28',
+                    fontWeight: 900,
+                    color: titleColor,
+                    margin: 0,
+                    textShadow: '0 4px 25px rgba(0,0,0,1)',
+                    whiteSpace: 'pre-line',
+                    wordBreak: 'break-word',
+                    overflow: 'hidden',
+                    maxHeight: '420px',
+                  }}
+                >
+                  {headerTitle}
+                </h1>
+                {subheader && (
+                  <p
+                    style={{
+                      fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                      fontSize: `${subheaderFontSize || 30}px`,
+                      fontWeight: 600,
+                      color: subTitleColor,
+                      margin: 0,
+                      lineHeight: '1.45',
+                      wordBreak: 'break-word',
+                      overflow: 'hidden',
+                      maxHeight: '100px',
+                    }}
+                  >
+                    {subheader}
+                  </p>
+                )}
+              </div>
+
+              {/* Bottom: Author + waveform */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', flexShrink: 0 }}>
+                {authorName && (
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '10px 24px',
+                      borderRadius: '16px',
+                      background: authorBgColor || 'rgba(30,41,59,0.92)',
+                      border: '1.5px solid rgba(255,255,255,0.28)',
+                      width: 'fit-content',
+                    }}
+                  >
+                    <FeatherPenIcon size={20} color={authorCol} />
+                    <span
+                      style={{
+                        fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                        fontSize: `${authorFontSize || 24}px`,
+                        fontWeight: 700,
+                        color: authorCol,
+                        lineHeight: '1.4',
+                      }}
+                    >
+                      {authorName}
+                    </span>
+                  </div>
+                )}
+
+                <div style={{ width: '100%', maxWidth: '700px' }}>
+                  <AudioWaveformVisualizer
+                    barCount={56}
+                    accentColor={theme.accentColor}
+                    secondaryColor={theme.secondaryColor}
+                    loopDurationFrames={loopDurationFrames}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {/* ======================================================== */}
         {/* COMPOSITION 4: MINIMALIST STUDIO GLASS (Lower Console Dock) */}
+        {/* Layout: Transparent top (shows background), bottom console dock (200px).  */}
+        {/* Top: logo/badge left + episode badge right (absolute, 40px from top).     */}
+        {/* Bottom: mini artwork + title/subtitle/author + waveform (absolute dock).  */}
         {/* ======================================================== */}
         {videoCompositionId === 'video-comp-4-minimal-glass' && (
           <div style={{ position: 'absolute', inset: 0, zIndex: 30, pointerEvents: 'none' }}>
-            {/* Top Minimal Header */}
+            {/* Top Header Row: Logo/Badge (left) + Episode badge (right) */}
             <div
               style={{
                 position: 'absolute',
@@ -640,8 +746,8 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                     gap: '8px',
                     padding: '8px 20px',
                     borderRadius: '999px',
-                    background: 'rgba(15, 23, 42, 0.85)',
-                    border: '1.5px solid rgba(255,255,255,0.2)',
+                    background: 'rgba(15, 23, 42, 0.88)',
+                    border: '1.5px solid rgba(255,255,255,0.22)',
                     fontSize: '13px',
                     fontWeight: 800,
                     letterSpacing: '0.1em',
@@ -660,9 +766,10 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                     borderRadius: '999px',
                     background: epBgCol,
                     color: epTextCol,
-                    fontSize: `${episodeFontSize}px`,
+                    fontSize: `${episodeFontSize || 18}px`,
                     fontWeight: 800,
                     border: `1.5px solid ${theme.accentColor}`,
+                    lineHeight: '1.4',
                   }}
                 >
                   {episodeText}
@@ -670,36 +777,36 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               )}
             </div>
 
-            {/* Bottom Floating Console Dock (Leaves 80% screen clear for background video) */}
+            {/* Bottom Floating Console Dock — fixed 210px tall, leaves 80%+ screen for bg video */}
             <div
               style={{
                 position: 'absolute',
-                bottom: '50px',
+                bottom: '48px',
                 left: '80px',
                 right: '80px',
-                height: '190px',
+                height: '210px',
                 borderRadius: '32px',
-                background: 'rgba(15, 23, 42, 0.90)',
-                border: '1.5px solid rgba(255, 255, 255, 0.22)',
-                boxShadow: '0 25px 70px rgba(0,0,0,0.85)',
+                background: 'rgba(10, 15, 30, 0.93)',
+                border: '1.5px solid rgba(255, 255, 255, 0.24)',
+                boxShadow: '0 25px 70px rgba(0,0,0,0.90), inset 0 1px 0 rgba(255,255,255,0.08)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '24px 36px',
-                gap: '30px',
+                gap: '28px',
+                padding: '0 36px',
                 boxSizing: 'border-box',
+                overflow: 'hidden',
               }}
             >
-              {/* Left Miniature Artwork */}
+              {/* Left: Miniature Artwork Square */}
               <div
                 style={{
-                  width: '140px',
-                  height: '140px',
-                  borderRadius: artworkShape === 'circle' ? '50%' : '18px',
+                  width: '154px',
+                  height: '154px',
+                  borderRadius: artworkShape === 'circle' ? '50%' : '20px',
                   overflow: 'hidden',
                   flexShrink: 0,
-                  border: '2px solid rgba(255,255,255,0.25)',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.7)',
+                  border: '2px solid rgba(255,255,255,0.28)',
+                  boxShadow: '0 8px 28px rgba(0,0,0,0.80)',
                   background: '#1e293b',
                 }}
               >
@@ -707,24 +814,26 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                   <img src={resolvedArtwork} alt="Cover" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <BookOpenIcon size={40} color="#94a3b8" />
+                    <BookOpenIcon size={44} color="#94a3b8" />
                   </div>
                 )}
               </div>
 
-              {/* Center Title & Author */}
-              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {/* Center: Title + Subtitle + Author — overflow hidden, NO nowrap */}
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '5px', overflow: 'hidden' }}>
                 <h1
                   style={{
                     fontFamily: "'PannYeat', 'Padauk', sans-serif",
-                    fontSize: `${headerFontSize || 54}px`,
+                    fontSize: `${Math.min(headerFontSize || 50, 56)}px`,
                     fontWeight: 900,
                     color: titleColor,
                     margin: 0,
-                    lineHeight: '1.25',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
+                    lineHeight: '1.28',
                     overflow: 'hidden',
+                    maxHeight: '80px',
+                    wordBreak: 'break-word',
+                    whiteSpace: 'pre-line',
+                    textShadow: '0 2px 10px rgba(0,0,0,0.9)',
                   }}
                 >
                   {headerTitle}
@@ -733,32 +842,41 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                   <p
                     style={{
                       fontFamily: "'PannYeat', 'Padauk', sans-serif",
-                      fontSize: `${subheaderFontSize || 22}px`,
+                      fontSize: `${Math.min(subheaderFontSize || 22, 24)}px`,
                       fontWeight: 600,
                       color: subTitleColor,
                       margin: 0,
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
                       overflow: 'hidden',
+                      maxHeight: '38px',
+                      wordBreak: 'break-word',
+                      lineHeight: '1.4',
                     }}
                   >
                     {subheader}
                   </p>
                 )}
                 {authorName && (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '2px', flexShrink: 0 }}>
                     <FeatherPenIcon size={16} color={authorCol} />
-                    <span style={{ fontSize: `${authorFontSize || 20}px`, fontWeight: 700, color: authorCol }}>
+                    <span
+                      style={{
+                        fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                        fontSize: `${Math.min(authorFontSize || 20, 22)}px`,
+                        fontWeight: 700,
+                        color: authorCol,
+                        lineHeight: '1.4',
+                      }}
+                    >
                       {authorName}
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* Right Continuous Audio Equalizer */}
-              <div style={{ width: '480px', flexShrink: 0 }}>
+              {/* Right: Audio Equalizer Bars */}
+              <div style={{ width: '460px', flexShrink: 0 }}>
                 <AudioWaveformVisualizer
-                  barCount={46}
+                  barCount={48}
                   accentColor={theme.accentColor}
                   secondaryColor={theme.secondaryColor}
                   loopDurationFrames={loopDurationFrames}
@@ -769,13 +887,19 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
         )}
 
         {/* ======================================================== */}
-        {/* COMPOSITION 5: ISOMETRIC MODERN ALBUM (Vinyl & 3D Book) */}
+        {/* COMPOSITION 5: ISOMETRIC MODERN ALBUM (Vinyl & 3D Book)   */}
+        {/* Layout: Left column = 3D perspective artwork (centered in 560px wide col) */}
+        {/* Right column = flex:1 glass card — EXPLICIT height 960px   */}
+        {/* Parent: absolute inset with explicit height 960px for proper flex layout */}
         {/* ======================================================== */}
         {videoCompositionId === 'video-comp-5-isometric-vinyl' && (
           <div
             style={{
               position: 'absolute',
-              inset: '60px 80px',
+              top: '60px',
+              left: '80px',
+              right: '80px',
+              height: '960px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -783,30 +907,55 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               zIndex: 30,
             }}
           >
-            {/* Left 3D Isometric Book & Concentric Acoustic Ring */}
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {/* Concentric Acoustic Ring Backdrop */}
+            {/* Left: 3D Isometric Artwork with decorative acoustic ring */}
+            <div
+              style={{
+                width: '520px',
+                height: '960px',
+                flexShrink: 0,
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {/* Outer concentric ring */}
               <div
                 style={{
                   position: 'absolute',
-                  width: '450px',
-                  height: '450px',
+                  width: '480px',
+                  height: '480px',
                   borderRadius: '50%',
                   border: `2px dashed ${theme.accentColor}55`,
-                  boxShadow: `0 0 50px ${theme.accentColor}33`,
+                  boxShadow: `0 0 60px ${theme.accentColor}33`,
                   pointerEvents: 'none',
+                  zIndex: 0,
                 }}
               />
+              {/* Inner ring */}
+              <div
+                style={{
+                  position: 'absolute',
+                  width: '340px',
+                  height: '340px',
+                  borderRadius: '50%',
+                  border: `1px dashed ${theme.accentColor}30`,
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}
+              />
+              {/* 3D Rotated Artwork */}
               <div
                 style={{
                   transform: 'perspective(1100px) rotateY(-18deg) rotateX(6deg) scale(1.02)',
                   filter: 'drop-shadow(0 30px 60px rgba(0,0,0,0.95))',
+                  zIndex: 1,
                 }}
               >
                 <ArtworkHeroCard
                   artworkUrl={artworkUrl}
                   shape={artworkShape}
-                  artworkWidth={390}
+                  artworkWidth={370}
                   title={headerTitle}
                   authorName={authorName}
                   accentColor={theme.accentColor}
@@ -815,41 +964,52 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
               </div>
             </div>
 
-            {/* Right Information & Waveform Console Card */}
+            {/* Right: Information & Waveform Glass Card — explicit height 960px */}
             <div
               style={{
                 flex: 1,
                 minWidth: 0,
+                height: '960px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                maxHeight: '620px',
-                height: '100%',
-                padding: '38px 46px',
+                padding: '52px 50px',
                 borderRadius: '32px',
-                background: 'rgba(15, 23, 42, 0.88)',
-                border: '1.5px solid rgba(255, 255, 255, 0.20)',
-                boxShadow: '0 25px 65px rgba(0,0,0,0.7)',
+                background: 'rgba(15, 23, 42, 0.90)',
+                border: '1.5px solid rgba(255, 255, 255, 0.22)',
+                boxShadow: '0 25px 65px rgba(0,0,0,0.75)',
+                boxSizing: 'border-box',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 20px',
-                    borderRadius: '999px',
-                    background: 'rgba(30, 41, 59, 0.85)',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    fontSize: '13px',
-                    fontWeight: 800,
-                    letterSpacing: '0.1em',
-                    color: '#94a3b8',
-                  }}
-                >
-                  <DiscIcon size={16} color={theme.accentColor} />
-                  <span>HIGH FIDELITY AUDIO NOVEL</span>
+              {/* Top: Genre badge + Episode tag */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 20px',
+                      borderRadius: '999px',
+                      background: 'rgba(30, 41, 59, 0.90)',
+                      border: '1px solid rgba(255,255,255,0.22)',
+                      fontSize: '13px',
+                      fontWeight: 800,
+                      letterSpacing: '0.1em',
+                      color: '#94a3b8',
+                    }}
+                  >
+                    <DiscIcon size={16} color={theme.accentColor} />
+                    <span>HIGH FIDELITY AUDIO NOVEL</span>
+                  </div>
+
+                  {resolvedLogo && (
+                    <img
+                      src={resolvedLogo}
+                      alt="Logo"
+                      style={{ height: '36px', maxWidth: '120px', objectFit: 'contain', borderRadius: '6px' }}
+                    />
+                  )}
                 </div>
 
                 {episodeText && (
@@ -859,9 +1019,10 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                       borderRadius: '999px',
                       background: epBgCol,
                       color: epTextCol,
-                      fontSize: `${episodeFontSize}px`,
+                      fontSize: `${episodeFontSize || 18}px`,
                       fontWeight: 800,
                       border: `1.5px solid ${theme.accentColor}`,
+                      lineHeight: '1.4',
                     }}
                   >
                     {episodeText}
@@ -869,17 +1030,21 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                 )}
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {/* Middle: Title + Subtitle — flex:1 centered */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: 1, justifyContent: 'center', padding: '30px 0' }}>
                 <h1
                   style={{
                     fontFamily: "'PannYeat', 'Padauk', sans-serif",
-                    fontSize: `${headerFontSize || 70}px`,
-                    lineHeight: '1.3',
+                    fontSize: `${headerFontSize || 72}px`,
+                    lineHeight: '1.32',
                     fontWeight: 900,
                     color: titleColor,
                     margin: 0,
-                    textShadow: '0 4px 20px rgba(0,0,0,0.95)',
+                    textShadow: '0 4px 22px rgba(0,0,0,0.98)',
                     whiteSpace: 'pre-line',
+                    wordBreak: 'break-word',
+                    overflow: 'hidden',
+                    maxHeight: '380px',
                   }}
                 >
                   {headerTitle}
@@ -892,6 +1057,10 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                       fontWeight: 600,
                       color: subTitleColor,
                       margin: 0,
+                      lineHeight: '1.45',
+                      wordBreak: 'break-word',
+                      overflow: 'hidden',
+                      maxHeight: '90px',
                     }}
                   >
                     {subheader}
@@ -899,33 +1068,44 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                 )}
               </div>
 
-              {authorName && (
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '10px 24px',
-                    borderRadius: '16px',
-                    background: authorBgColor || 'rgba(30, 41, 59, 0.90)',
-                    border: '1.5px solid rgba(255,255,255,0.2)',
-                    width: 'fit-content',
-                  }}
-                >
-                  <FeatherPenIcon size={20} color={authorCol} />
-                  <span style={{ fontSize: `${authorFontSize || 24}px`, fontWeight: 700, color: authorCol }}>
-                    {authorName}
-                  </span>
-                </div>
-              )}
+              {/* Bottom: Author badge + waveform */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '22px', flexShrink: 0 }}>
+                {authorName && (
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '10px 24px',
+                      borderRadius: '16px',
+                      background: authorBgColor || 'rgba(30, 41, 59, 0.92)',
+                      border: '1.5px solid rgba(255,255,255,0.22)',
+                      width: 'fit-content',
+                    }}
+                  >
+                    <FeatherPenIcon size={20} color={authorCol} />
+                    <span
+                      style={{
+                        fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                        fontSize: `${authorFontSize || 24}px`,
+                        fontWeight: 700,
+                        color: authorCol,
+                        lineHeight: '1.4',
+                      }}
+                    >
+                      {authorName}
+                    </span>
+                  </div>
+                )}
 
-              <div style={{ width: '100%' }}>
-                <AudioWaveformVisualizer
-                  barCount={54}
-                  accentColor={theme.accentColor}
-                  secondaryColor={theme.secondaryColor}
-                  loopDurationFrames={loopDurationFrames}
-                />
+                <div style={{ width: '100%' }}>
+                  <AudioWaveformVisualizer
+                    barCount={56}
+                    accentColor={theme.accentColor}
+                    secondaryColor={theme.secondaryColor}
+                    loopDurationFrames={loopDurationFrames}
+                  />
+                </div>
               </div>
             </div>
           </div>

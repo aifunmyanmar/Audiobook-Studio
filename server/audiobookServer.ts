@@ -359,20 +359,48 @@ export function audiobookServerPlugin(): Plugin {
         const renderCacheDir = path.resolve(process.cwd(), 'data', 'render_cache');
         if (!fs.existsSync(renderCacheDir)) fs.mkdirSync(renderCacheDir, { recursive: true });
 
-        function cacheBase64ToDisk(base64Data: string, prefix = 'asset'): string {
-          if (!base64Data || !base64Data.startsWith('data:')) return base64Data;
-          const match = base64Data.match(/^data:([^;]+);base64,(.+)$/);
-          if (!match) return base64Data;
-          const mime = match[1];
-          const b64 = match[2];
-          const ext = mime.includes('png') ? '.png' : (mime.includes('wav') ? '.wav' : (mime.includes('mp3') ? '.mp3' : '.jpg'));
-          const hash = crypto.createHash('md5').update(b64.slice(0, 1000)).digest('hex');
-          const filename = `${prefix}_${hash}${ext}`;
-          const filePath = path.join(renderCacheDir, filename);
-          if (!fs.existsSync(filePath)) {
-            fs.writeFileSync(filePath, Buffer.from(b64, 'base64'));
+        function cacheBase64ToDisk(inputPathOrData: string, prefix = 'asset'): string {
+          if (!inputPathOrData) return '';
+          if (inputPathOrData.startsWith('http://') || inputPathOrData.startsWith('https://')) {
+            return inputPathOrData;
           }
-          return `http://localhost:1104/api/render-cache?file=${filename}`;
+          if (inputPathOrData.startsWith('data:')) {
+            const match = inputPathOrData.match(/^data:([^;]+);base64,(.+)$/);
+            if (!match) return inputPathOrData;
+            const mime = match[1];
+            const b64 = match[2];
+            const ext = mime.includes('png') ? '.png' : (mime.includes('wav') ? '.wav' : (mime.includes('mp3') ? '.mp3' : '.jpg'));
+            const hash = crypto.createHash('md5').update(b64.slice(0, 1000)).digest('hex');
+            const filename = `${prefix}_${hash}${ext}`;
+            const filePath = path.join(renderCacheDir, filename);
+            if (!fs.existsSync(filePath)) {
+              fs.writeFileSync(filePath, Buffer.from(b64, 'base64'));
+            }
+            return `http://localhost:1104/api/render-cache?file=${filename}`;
+          }
+
+          // Handle local files (e.g. /downloads/..., /backgrounds/..., or absolute system paths)
+          let localDiskPath = inputPathOrData;
+          if (inputPathOrData.startsWith('/downloads/')) {
+            localDiskPath = path.resolve(process.cwd(), 'public', inputPathOrData.replace(/^\//, ''));
+          } else if (inputPathOrData.startsWith('/backgrounds/')) {
+            localDiskPath = path.resolve(process.cwd(), 'public', inputPathOrData.replace(/^\//, ''));
+          }
+          if (fs.existsSync(localDiskPath)) {
+            try {
+              const ext = path.extname(localDiskPath) || '.png';
+              const hash = crypto.createHash('md5').update(localDiskPath).digest('hex');
+              const filename = `${prefix}_${hash}${ext}`;
+              const filePath = path.join(renderCacheDir, filename);
+              if (!fs.existsSync(filePath)) {
+                fs.copyFileSync(localDiskPath, filePath);
+              }
+              return `http://localhost:1104/api/render-cache?file=${filename}`;
+            } catch (e) {
+              console.warn('[Cache Local File Error]', e);
+            }
+          }
+          return inputPathOrData;
         }
 
         let cachedBundleLocation: string | null = null;

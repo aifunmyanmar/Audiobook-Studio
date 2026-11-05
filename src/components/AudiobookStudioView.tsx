@@ -985,11 +985,11 @@ interface AudiobookQueueItem {
     return () => clearInterval(interval);
   }, [fetchQueueStatus, fetchCustomBgPresets, activeJob]);
 
-  // Auto-scroll logs to bottom as new live logs arrive
-  const logsEndRef = useRef<HTMLDivElement | null>(null);
+  // Auto-scroll logs to bottom as new live logs arrive (scroll WITHIN the container, never the page)
+  const logsContainerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    if (logsEndRef.current) {
-      logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (logsContainerRef.current) {
+      logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
     }
   }, [activeJob?.logs?.length]);
 
@@ -2173,6 +2173,7 @@ interface AudiobookQueueItem {
                     setArtworkPathInput(e.target.value);
                     setArtworkUrl(e.target.value);
                   }}
+                  onBlur={handleApplyArtworkPath}
                   onKeyDown={(e) => e.key === 'Enter' && handleApplyArtworkPath()}
                   placeholder="/path/to/cover.jpg or https://..."
                   className="w-full px-3 py-1.5 text-xs bg-slate-950 border border-slate-800 rounded-xl text-slate-300 font-mono focus:outline-none focus:border-pink-500"
@@ -2511,6 +2512,7 @@ interface AudiobookQueueItem {
                     setLogoPathInput(e.target.value);
                     setLogoUrl(e.target.value);
                   }}
+                  onBlur={handleApplyLogoPath}
                   onKeyDown={(e) => e.key === 'Enter' && handleApplyLogoPath()}
                   placeholder="/path/to/logo.png"
                   className="flex-1 px-3 py-1.5 text-xs bg-slate-950 border border-slate-800 rounded-lg text-slate-300 font-mono focus:outline-none"
@@ -3697,7 +3699,7 @@ interface AudiobookQueueItem {
 
                     {/* Expandable Real-Time Console Logs */}
                     {activeJob.logs && activeJob.logs.length > 0 && (
-                      <div className="mt-2 rounded-xl bg-slate-950 border border-slate-800 p-2.5 max-h-36 overflow-y-auto font-mono text-[10px] space-y-1 custom-scrollbar text-slate-400">
+                      <div ref={logsContainerRef} className="mt-2 rounded-xl bg-slate-950 border border-slate-800 p-2.5 max-h-36 overflow-y-auto font-mono text-[10px] space-y-1 custom-scrollbar text-slate-400">
                         {activeJob.logs.map((log: string, idx: number) => (
                           <div key={idx} className="truncate">
                             <span className="text-emerald-400 select-none mr-1.5">›</span>
@@ -3706,7 +3708,6 @@ interface AudiobookQueueItem {
                             </span>
                           </div>
                         ))}
-                        <div ref={logsEndRef} />
                       </div>
                     )}
                   </div>

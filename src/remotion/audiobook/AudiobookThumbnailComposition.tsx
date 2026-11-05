@@ -424,8 +424,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               justifyContent: 'space-between',
               zIndex: 10,
               boxSizing: 'border-box',
-              overflow: 'hidden',
-              maxHeight: '680px',
             }}
           >
             <div
@@ -437,12 +435,10 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 background: 'rgba(15, 23, 42, 0.88)',
                 border: '1.5px solid rgba(255,255,255,0.18)',
                 boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
-                maxHeight: '170px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
                 boxSizing: 'border-box',
-                overflow: 'hidden',
               }}
             >
               <h1
@@ -455,8 +451,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                   textShadow: '0 4px 20px rgba(0,0,0,0.9)',
                   whiteSpace: 'pre-line',
                   wordBreak: 'break-word',
-                  maxHeight: '115px',
-                  overflow: 'hidden',
                 }}
               >
                 {headerTitle}
@@ -791,14 +785,12 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               justifyContent: 'space-between',
               zIndex: 10,
               boxSizing: 'border-box',
-              overflow: 'hidden',
-              maxHeight: '672px',
             }}
           >
             <div
               style={{
                 width: '100%',
-                padding: '16px 28px',
+                padding: '20px 32px',
                 borderRadius: '24px',
                 background: 'linear-gradient(to right, rgba(15,23,42,0.95), rgba(30,41,59,0.95))',
                 border: '2px solid rgba(255,255,255,0.25)',
@@ -806,7 +798,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: '20px',
+                gap: '24px',
                 boxSizing: 'border-box',
               }}
             >
@@ -815,14 +807,12 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                   style={{
                     fontSize: `${headerFontSize || 58}px`,
                     fontWeight: 900,
-                    lineHeight: '1.2',
+                    lineHeight: '1.25',
                     margin: 0,
                     color: titleColor,
                     textShadow: '0 4px 20px rgba(0,0,0,0.9)',
                     whiteSpace: 'pre-line',
                     wordBreak: 'break-word',
-                    maxHeight: '130px',
-                    overflow: 'hidden',
                   }}
                 >
                   {headerTitle}
@@ -833,7 +823,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                       fontSize: `${subheaderFontSize || 20}px`,
                       fontWeight: 600,
                       color: subheaderColor,
-                      margin: '4px 0 0 0',
+                      margin: '6px 0 0 0',
                       whiteSpace: 'nowrap',
                       textOverflow: 'ellipsis',
                       overflow: 'hidden',
