@@ -233,6 +233,74 @@ export const AUDIOBOOK_THEMES: AudiobookThemeConfig[] = [
   },
 ];
 
+export type AudiobookVideoCompositionId =
+  | 'video-comp-1-classic'
+  | 'video-comp-2-center-stage'
+  | 'video-comp-3-cinematic-wide'
+  | 'video-comp-4-minimal-glass'
+  | 'video-comp-5-isometric-vinyl'
+  | 'video-comp-6-dramatic-broadcast';
+
+export interface VideoCompositionOption {
+  id: AudiobookVideoCompositionId;
+  labelMm: string;
+  labelEn: string;
+  descMm: string;
+  descEn: string;
+  badge: string;
+}
+
+export const VIDEO_COMPOSITION_OPTIONS: VideoCompositionOption[] = [
+  {
+    id: 'video-comp-1-classic',
+    labelMm: 'Classic Studio Split (လက်ရှိ မူလ)',
+    labelEn: 'Classic Studio Split (Default)',
+    descMm: 'ဘယ်ဘက် 3D စာအုပ်ကာဗာ + ညာဘက် ခေါင်းစီး၊ စာရေးသူနှင့် အသံလှိုင်း Visualizer',
+    descEn: 'Left 3D book cover with right-side glass typography & audio waveform.',
+    badge: '1',
+  },
+  {
+    id: 'video-comp-2-center-stage',
+    labelMm: 'Center Stage Spotlight (အလယ်ဗဟို အထူးပြု)',
+    labelEn: 'Center Stage Spotlight',
+    descMm: 'အလယ်ဗဟို စာအုပ်ကာဗာကြီး + အထက်ခေါင်းစီး + အောက်ခြေ အသံလှိုင်း အပြည့်',
+    descEn: 'Prominent center artwork spotlight framed by top marquee & wide equalizer.',
+    badge: '2',
+  },
+  {
+    id: 'video-comp-3-cinematic-wide',
+    labelMm: 'Cinematic Full-Bleed (ရုပ်ရှင်ဆန်ဆန် ညာဘက်ကာဗာ)',
+    labelEn: 'Cinematic Full-Bleed Hero',
+    descMm: 'ညာဘက်အပြည့် ကာဗာရုပ်ရှင်ဆန်ဆန် ပြသမှု + ဘယ်ဘက် ခမ်းနားသော စာသားနှင့် အသံလှိုင်း',
+    descEn: 'Right-side wide artwork bleed with left-side bold typography & soundwave.',
+    badge: '3',
+  },
+  {
+    id: 'video-comp-4-minimal-glass',
+    labelMm: 'Minimalist Studio Glass (ခေတ်မီ အောက်ခြေဘား)',
+    labelEn: 'Minimalist Studio Glass',
+    descMm: 'အောက်ခြေ floating မှန်ကြည်ဘားတွင် ကာဗာအသေး၊ စာသားနှင့် အသံလှိုင်းပြသမှု',
+    descEn: 'Floating bottom frosted glass bar allowing maximum background video immersion.',
+    badge: '4',
+  },
+  {
+    id: 'video-comp-5-isometric-vinyl',
+    labelMm: 'Isometric Vinyl Album (စောင်း 3D စာအုပ်နှင့် အသံခွေ)',
+    labelEn: 'Isometric Modern Album',
+    descMm: 'စောင်းထားသော 3D စာအုပ် + အနုပညာ အသံလှိုင်း စက်ဝိုင်း visualizer',
+    descEn: 'Angled 3D book cover paired with acoustic pulse rings & sharp typography.',
+    badge: '5',
+  },
+  {
+    id: 'video-comp-6-dramatic-broadcast',
+    labelMm: 'Dramatic Broadcast (သည်းထိတ်ရင်ဖို ဘရော့ကတ်)',
+    labelEn: 'Dramatic Broadcast & Thriller',
+    descMm: 'အပေါ် header bar + ပြင်းထန်သော အလင်းရောင်ခြည်၊ စာလုံးထူနှင့် dual visualizer',
+    descEn: 'High-contrast broadcast ribbon, glowing accents, and dual equalizer meters.',
+    badge: '6',
+  },
+];
+
 export interface AudiobookProps {
   headerTitle: string;
   subheader?: string;
@@ -258,4 +326,5 @@ export interface AudiobookProps {
   authorBgColor?: string;
   episodeTextColor?: string;
   episodeBgColor?: string;
+  videoCompositionId?: AudiobookVideoCompositionId;
 }

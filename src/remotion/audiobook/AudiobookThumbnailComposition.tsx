@@ -9,6 +9,10 @@ import {
   StarIcon,
   ZapIcon,
   BookOpenIcon,
+  CrownIcon,
+  CheckCircleIcon,
+  RadioIcon,
+  SwordIcon,
 } from './icons';
 
 export type AudiobookThumbnailLayoutId =
@@ -17,7 +21,12 @@ export type AudiobookThumbnailLayoutId =
   | 'layout-3-editorial'
   | 'layout-4-isometric'
   | 'layout-5-bold'
-  | 'layout-6-action';
+  | 'layout-6-action'
+  | 'layout-7-neon-cyber'
+  | 'layout-8-vintage-gold'
+  | 'layout-9-floating-cards'
+  | 'layout-10-podcast-cinematic'
+  | 'layout-11-mystery-dark';
 
 export interface ThumbnailLayoutOption {
   id: AudiobookThumbnailLayoutId;
@@ -69,6 +78,41 @@ export const THUMBNAIL_LAYOUT_OPTIONS: ThumbnailLayoutOption[] = [
     labelEn: 'Action & Crime Thriller',
     descMm: 'ဒေါသထွက်ဖွယ် အနီ/ရွှေ ရဲရဲတောက် အလင်းရောင်ခြည် + စာလုံးထူကြမ်း + အက်ရှင် 3D ကာဗာ',
     badge: '6',
+  },
+  {
+    id: 'layout-7-neon-cyber',
+    labelMm: 'နီယွန်ဆန်းပြား အနာဂတ်စတိုင်',
+    labelEn: 'Neon Cyber Glow',
+    descMm: 'နီယွန်အလင်းတန်း ဘောင်ကွပ် + အနာဂတ်ဆန်ဆန် 3D စာအုပ်နှင့် ဆွဲဆောင်မှုရှိသော အလင်းပြန်စာသား',
+    badge: '7',
+  },
+  {
+    id: 'layout-8-vintage-gold',
+    labelMm: 'ဂန္ထဝင် ရွှေရောင်နန်းဆန်',
+    labelEn: 'Royal Vintage Gold',
+    descMm: 'ရွှေရောင်ပန်းခက် ထောင့်စွန်းများ + ရှေးဟောင်း သားရေကာဗာ + ခန့်ညားသော ရွှေရောင်စာသား',
+    badge: '8',
+  },
+  {
+    id: 'layout-9-floating-cards',
+    labelMm: 'မျဉ်းစောင်းဒိုင်းနမစ် မျက်နှာနှစ်ခြမ်း',
+    labelEn: 'Dynamic Diagonal Split',
+    descMm: 'ထောင့်စောင်း အလင်းအမှောင် မျက်နှာပြင် + အလယ်မှ စောင်းထားသော ကာဗာနှင့် CTR အမြင့်ဆုံး စာလုံးကတ်',
+    badge: '9',
+  },
+  {
+    id: 'layout-10-podcast-cinematic',
+    labelMm: 'ရုပ်ရှင်အဆင့် စတူဒီယို ဘရော့ကတ်',
+    labelEn: 'Studio Masterclass Broadcast',
+    descMm: 'အသံသွင်းစတူဒီယို နောက်ခံ + Verified အမှတ်တံဆိပ် + ညာဘက် မီးမောင်းထိုး စာအုပ်ကြီး',
+    badge: '10',
+  },
+  {
+    id: 'layout-11-mystery-dark',
+    labelMm: 'လျှို့ဝှက်နက်နဲ သည်းထိတ်ရင်ဖို',
+    labelEn: 'Dark Noir Mystery',
+    descMm: 'မြူခိုးနက်နက်ထဲမှ ထွက်ပေါ်လာသော စာအုပ် + သွေးရောင်နှင့် အပြာရင့် လျှို့ဝှက်အလင်းတန်းများ',
+    badge: '11',
   },
 ];
 
@@ -280,7 +324,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 boxSizing: 'border-box',
               }}
             >
-              {/* Top Badge Row */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span
                   style={{
@@ -313,7 +356,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 )}
               </div>
 
-              {/* Title */}
               <h1
                 style={{
                   fontSize: `${headerFontSize || 64}px`,
@@ -329,7 +371,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 {headerTitle}
               </h1>
 
-              {/* Subheader */}
               {subheader && (
                 <p
                   style={{
@@ -345,7 +386,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 </p>
               )}
 
-              {/* Author Badge */}
               {authorName && (
                 <div
                   style={{
@@ -388,7 +428,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               maxHeight: '680px',
             }}
           >
-            {/* Top Title Banner */}
             <div
               style={{
                 width: '100%',
@@ -439,7 +478,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               )}
             </div>
 
-            {/* Center Hero Book Artwork (Compact Sizing to Prevent Overflow) */}
             <div
               style={{
                 transform: 'perspective(900px) rotateX(4deg)',
@@ -451,7 +489,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               {renderCover(280, 340)}
             </div>
 
-            {/* Bottom Row: Author Left / Episode Badge Right */}
             <div
               style={{
                 width: '100%',
@@ -520,7 +557,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               overflow: 'hidden',
             }}
           >
-            {/* Left Content Area (60%) */}
             <div
               style={{
                 width: '60%',
@@ -600,7 +636,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               )}
             </div>
 
-            {/* Right Large Cover Artwork (50% overlapping) */}
             <div
               style={{
                 position: 'absolute',
@@ -621,7 +656,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               ) : (
                 <div style={{ width: '100%', height: '100%', background: '#1e293b' }} />
               )}
-              {/* Vignette fade to left */}
               <div
                 style={{
                   position: 'absolute',
@@ -649,7 +683,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               boxSizing: 'border-box',
             }}
           >
-            {/* Left 3D Isometric Book Display */}
             <div
               style={{
                 transform: 'perspective(1000px) rotateY(-18deg) rotateX(8deg) scale(1.02)',
@@ -663,7 +696,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               })}
             </div>
 
-            {/* Right High-Impact Info */}
             <div
               style={{
                 flex: 1,
@@ -763,7 +795,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               maxHeight: '672px',
             }}
           >
-            {/* Top Full Banner Title */}
             <div
               style={{
                 width: '100%',
@@ -832,7 +863,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               )}
             </div>
 
-            {/* Bottom Row: Left Author Badge, Right Floating Artwork */}
             <div
               style={{
                 display: 'flex',
@@ -865,7 +895,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 </div>
               </div>
 
-              {/* Right Floating Artwork (Controlled Size to Prevent Canvas Overflow) */}
               <div style={{ transform: 'scale(0.95)', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.9))' }}>
                 {renderCover(290, 360)}
               </div>
@@ -886,7 +915,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               overflow: 'hidden',
             }}
           >
-            {/* Dramatic Action Background Overlay: Blood-Red / Amber Spotlight & Gritty Vignette */}
             <div
               style={{
                 position: 'absolute',
@@ -898,7 +926,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               }}
             />
 
-            {/* Subtle Diagonal Action Hazard Lines */}
             <div
               style={{
                 position: 'absolute',
@@ -914,7 +941,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               }}
             />
 
-            {/* Left Content Area (~56% width) */}
             <div
               style={{
                 width: '56%',
@@ -929,7 +955,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 overflow: 'hidden',
               }}
             >
-              {/* Badges Row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div
                   style={{
@@ -974,7 +999,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 )}
               </div>
 
-              {/* Giant Explosive Action Title */}
               <h1
                 style={{
                   fontSize: `${headerFontSize || 64}px`,
@@ -992,7 +1016,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 {headerTitle}
               </h1>
 
-              {/* Subheader with Dark Gunmetal Strip */}
               {subheader && (
                 <div
                   style={{
@@ -1022,7 +1045,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 </div>
               )}
 
-              {/* Author Badge */}
               {authorName && (
                 <div
                   style={{
@@ -1052,7 +1074,6 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               )}
             </div>
 
-            {/* Right Action Hero 3D Artwork (~44% width) */}
             <div
               style={{
                 width: '44%',
@@ -1079,6 +1100,839 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                   boxShadow: '0 0 40px rgba(220,38,38,0.5)',
                 })}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* LAYOUT 7: NEON CYBER GLOW (Futuristic Sci-Fi & Glowing Laser) */}
+        {/* ======================================================== */}
+        {layoutId === 'layout-7-neon-cyber' && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: '24px 36px',
+              borderRadius: '28px',
+              border: '2px solid rgba(6, 182, 212, 0.65)',
+              boxShadow: '0 0 35px rgba(6, 182, 212, 0.35), inset 0 0 35px rgba(168, 85, 247, 0.2)',
+              background: 'radial-gradient(circle at 30% 50%, rgba(15, 23, 42, 0.94) 0%, rgba(3, 7, 18, 0.98) 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '30px 48px',
+              gap: '40px',
+              zIndex: 10,
+              boxSizing: 'border-box',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Left Hologram Floating Artwork */}
+            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div
+                style={{
+                  transform: 'perspective(1000px) rotateY(10deg) scale(1.03)',
+                  filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.9)) drop-shadow(0 0 30px rgba(6, 182, 212, 0.5))',
+                }}
+              >
+                {renderCover(340, 460, {
+                  border: '2.5px solid #06b6d4',
+                  boxShadow: '0 0 30px rgba(6, 182, 212, 0.6)',
+                })}
+              </div>
+              {/* Futuristic Neon Reflection Halo */}
+              <div
+                style={{
+                  width: '320px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(ellipse, rgba(6, 182, 212, 0.7) 0%, transparent 75%)',
+                  marginTop: '12px',
+                  filter: 'blur(2px)',
+                }}
+              />
+            </div>
+
+            {/* Right Cyber Information Column */}
+            <div
+              style={{
+                flex: 1,
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: '14px',
+                zIndex: 10,
+              }}
+            >
+              {/* Badges Row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '7px 18px',
+                    borderRadius: '999px',
+                    background: 'rgba(6, 182, 212, 0.15)',
+                    border: '1.5px solid #06b6d4',
+                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)',
+                    color: '#67e8f9',
+                    fontSize: '13px',
+                    fontWeight: 900,
+                    letterSpacing: '0.12em',
+                  }}
+                >
+                  <ZapIcon size={15} color="#06b6d4" />
+                  <span>NEON CYBER EDITION</span>
+                </div>
+
+                {episodeText && (
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '7px 22px',
+                      borderRadius: '999px',
+                      background: epBgColor || 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
+                      color: epTextColor,
+                      fontSize: `${episodeFontSize || 20}px`,
+                      fontWeight: 900,
+                      boxShadow: '0 0 25px rgba(236, 72, 153, 0.6)',
+                      border: '1.5px solid rgba(244, 114, 182, 0.8)',
+                    }}
+                  >
+                    <FlameIcon size={16} color={epTextColor} />
+                    <span>{episodeText}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Glowing Laser Title */}
+              <h1
+                style={{
+                  fontSize: `${headerFontSize || 64}px`,
+                  fontWeight: 950,
+                  lineHeight: '1.24',
+                  margin: 0,
+                  color: titleColor,
+                  textShadow: '0 0 25px #06b6d4, 0 0 45px rgba(6, 182, 212, 0.6), 0 4px 15px rgba(0,0,0,1)',
+                  whiteSpace: 'pre-line',
+                  wordBreak: 'break-word',
+                  fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                }}
+              >
+                {headerTitle}
+              </h1>
+
+              {/* Futuristic Subtitle */}
+              {subheader && (
+                <div
+                  style={{
+                    padding: '6px 16px',
+                    borderRadius: '8px',
+                    background: 'rgba(6, 182, 212, 0.08)',
+                    borderLeft: '4px solid #06b6d4',
+                    width: 'fit-content',
+                    maxWidth: '100%',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: `${subheaderFontSize || 22}px`,
+                      fontWeight: 700,
+                      color: subheaderColor,
+                      margin: 0,
+                      textShadow: '0 0 10px rgba(6, 182, 212, 0.5)',
+                      lineHeight: '1.35',
+                    }}
+                  >
+                    {subheader}
+                  </p>
+                </div>
+              )}
+
+              {/* Cyber Author Capsule */}
+              {authorName && (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 22px',
+                    borderRadius: '999px',
+                    background: authorBgColor || 'rgba(15, 23, 42, 0.90)',
+                    border: '1.5px solid rgba(6, 182, 212, 0.5)',
+                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.3)',
+                    width: 'fit-content',
+                    marginTop: '4px',
+                  }}
+                >
+                  <FeatherPenIcon size={18} color={authorColor || '#38bdf8'} />
+                  <span style={{ fontSize: `${authorFontSize || 22}px`, fontWeight: 800, color: authorColor || '#38bdf8' }}>
+                    {authorName}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* LAYOUT 8: ROYAL VINTAGE GOLD (Aristocratic Classic Literature) */}
+        {/* ======================================================== */}
+        {layoutId === 'layout-8-vintage-gold' && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: '24px 36px',
+              borderRadius: '26px',
+              border: '2px solid rgba(245, 158, 11, 0.7)',
+              boxShadow: '0 0 40px rgba(217, 119, 6, 0.35), inset 0 0 45px rgba(0, 0, 0, 0.85)',
+              background: 'radial-gradient(circle at 45% 45%, #181005 0%, #0d0802 60%, #050301 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '30px 48px',
+              gap: '45px',
+              zIndex: 10,
+              boxSizing: 'border-box',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Left Gold-Embossed 3D Book */}
+            <div
+              style={{
+                transform: 'perspective(1000px) rotateY(-8deg) scale(1.03)',
+                filter: 'drop-shadow(0 25px 45px rgba(0,0,0,0.95)) drop-shadow(0 0 35px rgba(245, 158, 11, 0.45))',
+                flexShrink: 0,
+              }}
+            >
+              {renderCover(340, 480, {
+                border: '3px solid #f59e0b',
+                boxShadow: '0 0 35px rgba(245, 158, 11, 0.45)',
+              })}
+            </div>
+
+            {/* Right Royal Column */}
+            <div
+              style={{
+                flex: 1,
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: '15px',
+                zIndex: 10,
+              }}
+            >
+              {/* Royal Badge */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 20px',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(135deg, #78350f 0%, #451a03 100%)',
+                    border: '1.5px solid #f59e0b',
+                    boxShadow: '0 0 20px rgba(245, 158, 11, 0.4)',
+                    color: '#fef08a',
+                    fontSize: '13px',
+                    fontWeight: 900,
+                    letterSpacing: '0.12em',
+                  }}
+                >
+                  <CrownIcon size={16} color="#f59e0b" />
+                  <span>ROYAL MYANMAR CLASSIC</span>
+                </div>
+
+                {episodeText && (
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 22px',
+                      borderRadius: '8px',
+                      background: epBgColor || 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                      color: epTextColor || '#1e1b4b',
+                      fontSize: `${episodeFontSize || 22}px`,
+                      fontWeight: 900,
+                      boxShadow: '0 0 25px rgba(245, 158, 11, 0.6)',
+                      border: '1.5px solid #fef08a',
+                    }}
+                  >
+                    <StarIcon size={15} color={epTextColor || '#1e1b4b'} />
+                    <span>{episodeText}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Golden Embossed Title */}
+              <h1
+                style={{
+                  fontSize: `${headerFontSize || 64}px`,
+                  fontWeight: 900,
+                  lineHeight: '1.24',
+                  margin: 0,
+                  color: titleColor || '#fef08a',
+                  textShadow: '0 4px 20px rgba(0,0,0,1), 0 0 30px rgba(245, 158, 11, 0.6)',
+                  whiteSpace: 'pre-line',
+                  wordBreak: 'break-word',
+                  fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                }}
+              >
+                {headerTitle}
+              </h1>
+
+              {/* Subtitle */}
+              {subheader && (
+                <p
+                  style={{
+                    fontSize: `${subheaderFontSize || 22}px`,
+                    fontWeight: 600,
+                    color: subheaderColor || '#fed7aa',
+                    margin: 0,
+                    textShadow: '0 2px 10px rgba(0,0,0,0.9)',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  {subheader}
+                </p>
+              )}
+
+              {/* Author Wax-Seal Pill */}
+              {authorName && (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 24px',
+                    borderRadius: '12px',
+                    background: authorBgColor || 'rgba(30, 20, 5, 0.95)',
+                    border: '1.5px solid rgba(245, 158, 11, 0.6)',
+                    boxShadow: '0 6px 20px rgba(0,0,0,0.8)',
+                    width: 'fit-content',
+                    marginTop: '4px',
+                  }}
+                >
+                  <FeatherPenIcon size={18} color={authorColor || '#fbbf24'} />
+                  <span style={{ fontSize: `${authorFontSize || 24}px`, fontWeight: 800, color: authorColor || '#fbbf24' }}>
+                    {authorName}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* LAYOUT 9: DYNAMIC DIAGONAL SPLIT (High-CTR Dual Block) */}
+        {/* ======================================================== */}
+        {layoutId === 'layout-9-floating-cards' && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              zIndex: 10,
+              overflow: 'hidden',
+            }}
+          >
+            {/* Diagonal Left Half: Deep Charcoal Black (60% diagonal partition) */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                clipPath: 'polygon(0 0, 62% 0, 48% 100%, 0 100%)',
+                background: 'linear-gradient(135deg, #090d16 0%, #030712 100%)',
+                zIndex: 1,
+              }}
+            />
+
+            {/* Diagonal Right Half: Rich Vibrant Gradient */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                clipPath: 'polygon(62% 0, 100% 0, 100% 100%, 48% 100%)',
+                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.85) 0%, rgba(185, 28, 28, 0.95) 100%)',
+                zIndex: 1,
+              }}
+            />
+
+            {/* Left Content Area (54%) */}
+            <div
+              style={{
+                width: '54%',
+                height: '100%',
+                padding: '45px 35px 45px 65px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: '16px',
+                zIndex: 10,
+                boxSizing: 'border-box',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Badge */}
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '7px 20px',
+                  borderRadius: '999px',
+                  background: 'rgba(239, 68, 68, 0.25)',
+                  border: '1.5px solid #ef4444',
+                  boxShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
+                  color: '#ffffff',
+                  fontSize: '13px',
+                  fontWeight: 900,
+                  letterSpacing: '0.12em',
+                  width: 'fit-content',
+                }}
+              >
+                <FlameIcon size={16} color="#ef4444" />
+                <span>HOT RELEASE AUDIOBOOK</span>
+              </div>
+
+              {/* Bold Title */}
+              <h1
+                style={{
+                  fontSize: `${headerFontSize || 64}px`,
+                  fontWeight: 950,
+                  lineHeight: '1.24',
+                  margin: 0,
+                  color: titleColor,
+                  textShadow: '0 4px 25px rgba(0,0,0,1)',
+                  whiteSpace: 'pre-line',
+                  wordBreak: 'break-word',
+                  fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                }}
+              >
+                {headerTitle}
+              </h1>
+
+              {/* Subheader */}
+              {subheader && (
+                <p style={{ fontSize: `${subheaderFontSize || 22}px`, fontWeight: 600, color: subheaderColor, margin: 0 }}>
+                  {subheader}
+                </p>
+              )}
+
+              {/* Author Capsule */}
+              {authorName && (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 20px',
+                    borderRadius: '16px',
+                    background: authorBgColor || 'rgba(15, 23, 42, 0.90)',
+                    border: '1.5px solid rgba(255,255,255,0.2)',
+                    width: 'fit-content',
+                    marginTop: '4px',
+                  }}
+                >
+                  <FeatherPenIcon size={18} color={authorColor} />
+                  <span style={{ fontSize: `${authorFontSize || 22}px`, fontWeight: 700, color: authorColor }}>
+                    {authorName}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Right Tilted 3D Artwork (46%) */}
+            <div
+              style={{
+                width: '46%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                zIndex: 10,
+                paddingRight: '30px',
+              }}
+            >
+              {/* Floating Episode Badge */}
+              {episodeText && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '45px',
+                    right: '55px',
+                    padding: '10px 28px',
+                    borderRadius: '999px',
+                    background: epBgColor || '#111827',
+                    color: epTextColor,
+                    fontSize: `${episodeFontSize || 24}px`,
+                    fontWeight: 900,
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.8)',
+                    border: '2px solid rgba(255,255,255,0.3)',
+                    zIndex: 20,
+                  }}
+                >
+                  {episodeText}
+                </div>
+              )}
+
+              <div
+                style={{
+                  transform: 'perspective(1000px) rotateY(-14deg) rotateZ(2deg) scale(1.05)',
+                  filter: 'drop-shadow(0 30px 60px rgba(0,0,0,0.95))',
+                }}
+              >
+                {renderCover(360, 490, {
+                  border: '3px solid rgba(255,255,255,0.4)',
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* LAYOUT 10: STUDIO MASTERCLASS (High-End Podcast Broadcast) */}
+        {/* ======================================================== */}
+        {layoutId === 'layout-10-podcast-cinematic' && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '40px 65px',
+              gap: '40px',
+              zIndex: 10,
+              boxSizing: 'border-box',
+              background: 'radial-gradient(circle at 75% 50%, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.98) 75%)',
+            }}
+          >
+            {/* Left Content Area (~55%) */}
+            <div
+              style={{
+                flex: 1,
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: '16px',
+                zIndex: 10,
+              }}
+            >
+              {/* Studio Masterclass Header Bar */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '7px 20px',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                    border: '1.5px solid #38bdf8',
+                    boxShadow: '0 0 20px rgba(56, 189, 248, 0.5)',
+                    color: '#ffffff',
+                    fontSize: '13px',
+                    fontWeight: 900,
+                    letterSpacing: '0.12em',
+                  }}
+                >
+                  <RadioIcon size={16} color="#ffffff" />
+                  <span>STUDIO MASTERCLASS EDITION</span>
+                </div>
+
+                {episodeText && (
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '7px 22px',
+                      borderRadius: '8px',
+                      background: epBgColor || 'rgba(15, 23, 42, 0.90)',
+                      color: epTextColor,
+                      fontSize: `${episodeFontSize || 20}px`,
+                      fontWeight: 900,
+                      border: '1.5px solid #38bdf8',
+                    }}
+                  >
+                    <HeadphonesIcon size={16} color={epTextColor} />
+                    <span>{episodeText}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Title */}
+              <h1
+                style={{
+                  fontSize: `${headerFontSize || 64}px`,
+                  fontWeight: 950,
+                  lineHeight: '1.24',
+                  margin: 0,
+                  color: titleColor,
+                  textShadow: '0 4px 20px rgba(0,0,0,0.9)',
+                  whiteSpace: 'pre-line',
+                  wordBreak: 'break-word',
+                  fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                }}
+              >
+                {headerTitle}
+              </h1>
+
+              {/* Subheader */}
+              {subheader && (
+                <p style={{ fontSize: `${subheaderFontSize || 24}px`, fontWeight: 600, color: subheaderColor, margin: 0 }}>
+                  {subheader}
+                </p>
+              )}
+
+              {/* Verified Author Card */}
+              {authorName && (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '10px 24px',
+                    borderRadius: '16px',
+                    background: authorBgColor || 'rgba(15, 23, 42, 0.90)',
+                    border: '1.5px solid rgba(56, 189, 248, 0.4)',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.7)',
+                    width: 'fit-content',
+                    marginTop: '6px',
+                  }}
+                >
+                  <FeatherPenIcon size={20} color={authorColor || '#38bdf8'} />
+                  <span style={{ fontSize: `${authorFontSize || 24}px`, fontWeight: 800, color: authorColor || '#38bdf8' }}>
+                    {authorName}
+                  </span>
+                  <CheckCircleIcon size={18} color="#38bdf8" />
+                </div>
+              )}
+            </div>
+
+            {/* Right Hero Artwork with Studio Spotlight Ring */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                flexShrink: 0,
+              }}
+            >
+              {/* Diffused Spotlight Halo */}
+              <div
+                style={{
+                  position: 'absolute',
+                  width: '460px',
+                  height: '460px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%)',
+                  pointerEvents: 'none',
+                }}
+              />
+              <div style={{ transform: 'perspective(900px) rotateY(-6deg) scale(1.02)', filter: 'drop-shadow(0 25px 50px rgba(0,0,0,0.95))' }}>
+                {renderCover(360, 490, {
+                  border: '2.5px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 0 40px rgba(56, 189, 248, 0.3)',
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* LAYOUT 11: DARK NOIR MYSTERY (Crime, Suspense, Supernatural) */}
+        {/* ======================================================== */}
+        {layoutId === 'layout-11-mystery-dark' && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              zIndex: 10,
+              overflow: 'hidden',
+              background: 'radial-gradient(circle at 35% 45%, #0d131f 0%, #060910 60%, #020306 100%)',
+            }}
+          >
+            {/* Atmospheric Fog Vignette Overlay */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background:
+                  'radial-gradient(circle at 30% 50%, rgba(14, 165, 233, 0.15) 0%, rgba(220, 38, 38, 0.12) 50%, rgba(2, 3, 6, 0.92) 85%)',
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}
+            />
+
+            {/* Left Cover Emerging from Mist (~44%) */}
+            <div
+              style={{
+                width: '44%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingLeft: '50px',
+                zIndex: 10,
+                boxSizing: 'border-box',
+              }}
+            >
+              <div
+                style={{
+                  transform: 'perspective(1000px) rotateY(12deg) rotateZ(-1deg) scale(1.04)',
+                  filter:
+                    'drop-shadow(0 30px 60px rgba(0,0,0,0.98)) drop-shadow(0 0 40px rgba(220, 38, 38, 0.5))',
+                }}
+              >
+                {renderCover(350, 480, {
+                  border: '2.5px solid rgba(239, 68, 68, 0.6)',
+                  boxShadow: '0 0 35px rgba(239, 68, 68, 0.4)',
+                })}
+              </div>
+            </div>
+
+            {/* Right Information Column (~56%) */}
+            <div
+              style={{
+                width: '56%',
+                height: '100%',
+                padding: '45px 55px 45px 30px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: '16px',
+                zIndex: 10,
+                boxSizing: 'border-box',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Badges Row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 20px',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%)',
+                    border: '1.5px solid #ef4444',
+                    boxShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
+                    color: '#fca5a5',
+                    fontSize: '13px',
+                    fontWeight: 900,
+                    letterSpacing: '0.12em',
+                  }}
+                >
+                  <SwordIcon size={16} color="#ef4444" />
+                  <span>NOIR SUSPENSE / MYSTERY</span>
+                </div>
+
+                {episodeText && (
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 22px',
+                      borderRadius: '8px',
+                      background: epBgColor || '#991b1b',
+                      color: epTextColor,
+                      fontSize: `${episodeFontSize || 20}px`,
+                      fontWeight: 900,
+                      boxShadow: '0 0 25px rgba(220, 38, 38, 0.6)',
+                      border: '1.5px solid #f87171',
+                    }}
+                  >
+                    <FlameIcon size={16} color={epTextColor} />
+                    <span>{episodeText}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Title */}
+              <h1
+                style={{
+                  fontSize: `${headerFontSize || 64}px`,
+                  fontWeight: 950,
+                  lineHeight: '1.24',
+                  margin: 0,
+                  color: titleColor,
+                  textShadow: '0 0 30px rgba(220, 38, 38, 0.7), 0 4px 15px rgba(0,0,0,1)',
+                  whiteSpace: 'pre-line',
+                  wordBreak: 'break-word',
+                  fontFamily: "'PannYeat', 'Padauk', sans-serif",
+                }}
+              >
+                {headerTitle}
+              </h1>
+
+              {/* Subtitle */}
+              {subheader && (
+                <div
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '8px',
+                    background: 'rgba(15, 23, 42, 0.85)',
+                    borderLeft: '4px solid #ef4444',
+                    width: 'fit-content',
+                    maxWidth: '100%',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: `${subheaderFontSize || 22}px`,
+                      fontWeight: 700,
+                      color: subheaderColor,
+                      margin: 0,
+                      lineHeight: '1.35',
+                    }}
+                  >
+                    {subheader}
+                  </p>
+                </div>
+              )}
+
+              {/* Author Badge */}
+              {authorName && (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 22px',
+                    borderRadius: '12px',
+                    background: authorBgColor || 'rgba(24, 24, 27, 0.95)',
+                    border: '1.5px solid rgba(239, 68, 68, 0.5)',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.8)',
+                    width: 'fit-content',
+                    marginTop: '4px',
+                  }}
+                >
+                  <FeatherPenIcon size={18} color={authorColor || '#fca5a5'} />
+                  <span
+                    style={{
+                      fontSize: `${authorFontSize || 22}px`,
+                      fontWeight: 800,
+                      color: authorColor || '#fca5a5',
+                    }}
+                  >
+                    {authorName}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         )}

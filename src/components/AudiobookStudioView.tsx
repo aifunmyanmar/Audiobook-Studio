@@ -6,7 +6,13 @@ import {
   AudiobookThumbnailLayoutId,
   THUMBNAIL_LAYOUT_OPTIONS,
 } from '../remotion/audiobook/AudiobookThumbnailComposition';
-import { AUDIOBOOK_THEMES, AUDIOBOOK_GRADIENT_PRESETS, AudiobookThemeId } from '../remotion/audiobook/types';
+import {
+  AUDIOBOOK_THEMES,
+  AUDIOBOOK_GRADIENT_PRESETS,
+  AudiobookThemeId,
+  AudiobookVideoCompositionId,
+  VIDEO_COMPOSITION_OPTIONS,
+} from '../remotion/audiobook/types';
 import { DhammaStudioView } from './DhammaStudioView';
 import {
   Flower2,
@@ -43,6 +49,7 @@ import {
   Play,
   ListOrdered,
   History,
+  LayoutTemplate,
   Trash2,
   Film,
   Plus,
@@ -120,6 +127,7 @@ interface SavedAudiobookSettings {
   thumbEpisodeTextColor?: string;
   thumbEpisodeBgColor?: string;
   selectedThumbnailLayout?: AudiobookThumbnailLayoutId;
+  selectedVideoComposition?: AudiobookVideoCompositionId;
   generatedAnimeResult?: {
     imageUrl: string;
     imagePath: string;
@@ -309,6 +317,7 @@ interface AudiobookQueueItem {
     audio: boolean;
     artwork: boolean;
     typography: boolean;
+    videoComposition: boolean;
     thumbnail: boolean;
     videoPresets: boolean;
     gradients: boolean;
@@ -316,6 +325,7 @@ interface AudiobookQueueItem {
     audio: true,
     artwork: true,
     typography: true,
+    videoComposition: true,
     thumbnail: true,
     videoPresets: false, // Collapsed by default as requested
     gradients: false, // Collapsed by default as requested
@@ -324,6 +334,11 @@ interface AudiobookQueueItem {
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+
+  // Video Loop Composition Selector State (6 Presets, Default #1)
+  const [selectedVideoComposition, setSelectedVideoComposition] = useState<AudiobookVideoCompositionId>(
+    (initialSettings.selectedVideoComposition as AudiobookVideoCompositionId) || 'video-comp-1-classic'
+  );
 
   // Cover Art Style Selector Dropdown State
   const [isStyleDropdownOpen, setIsStyleDropdownOpen] = useState<boolean>(false);
@@ -434,6 +449,7 @@ interface AudiobookQueueItem {
         thumbEpisodeTextColor,
         thumbEpisodeBgColor,
         selectedThumbnailLayout,
+        selectedVideoComposition,
         generatedAnimeResult,
         webAudioUrlInput,
         geminiApiKey,
@@ -483,6 +499,7 @@ interface AudiobookQueueItem {
     thumbEpisodeTextColor,
     thumbEpisodeBgColor,
     selectedThumbnailLayout,
+    selectedVideoComposition,
     generatedAnimeResult,
     webAudioUrlInput,
     geminiApiKey,
@@ -1016,6 +1033,7 @@ interface AudiobookQueueItem {
       authorBgColor,
       episodeTextColor,
       episodeBgColor,
+      videoCompositionId: selectedVideoComposition,
     };
 
     try {
@@ -2519,7 +2537,95 @@ interface AudiobookQueueItem {
             )}
           </div>
 
-          {/* 4. YouTube Thumbnail Studio Card (5 Compositions) */}
+          {/* 4. Video Loop Composition Selector (6 Presets, Default #1) */}
+          <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 shadow-xl">
+            <button
+              type="button"
+              onClick={() => toggleSection('videoComposition')}
+              className="w-full flex items-center justify-between text-left group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
+                  <LayoutTemplate className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-xs font-bold uppercase tracking-wider text-indigo-300 block truncate">
+                    4. Video Loop Composition
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    6 Cinematic Video Stage Layouts (Preset #1 Default)
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-[11px] font-bold text-indigo-300 hidden sm:inline">
+                  {VIDEO_COMPOSITION_OPTIONS.find((c) => c.id === selectedVideoComposition)?.labelEn}
+                </span>
+                {expandedSections.videoComposition ? (
+                  <ChevronUp className="w-4 h-4 text-slate-400" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                )}
+              </div>
+            </button>
+
+            {expandedSections.videoComposition && (
+              <div className="space-y-3 pt-2 border-t border-slate-800/80">
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  Select how your book artwork, title, author, and audio waveform visualizer are staged in the 1080p/2K video loop.
+                </p>
+
+                <div className="grid grid-cols-1 gap-2">
+                  {VIDEO_COMPOSITION_OPTIONS.map((comp) => {
+                    const isSelected = selectedVideoComposition === comp.id;
+                    return (
+                      <button
+                        key={comp.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedVideoComposition(comp.id);
+                          setActivePreviewMode('video');
+                        }}
+                        className={`p-3 rounded-2xl border text-left transition-all flex items-start gap-3 ${
+                          isSelected
+                            ? 'bg-gradient-to-r from-indigo-950/70 via-purple-950/50 to-slate-900 border-indigo-400 ring-1 ring-indigo-400 shadow-lg shadow-indigo-500/10'
+                            : 'bg-slate-950/70 border-slate-800 hover:border-slate-700 hover:bg-slate-950 text-slate-300'
+                        }`}
+                      >
+                        <div
+                          className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black shrink-0 ${
+                            isSelected
+                              ? 'bg-indigo-400 text-slate-950 shadow-md'
+                              : 'bg-slate-800 text-slate-300'
+                          }`}
+                        >
+                          {comp.badge}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between">
+                            <span className={`text-xs font-bold truncate ${isSelected ? 'text-white' : 'text-slate-200'}`}>
+                              {comp.labelEn}
+                            </span>
+                            <span className="text-[10px] font-mono text-indigo-300/80 ml-2 shrink-0">
+                              Preset #{comp.badge}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
+                            {comp.descEn}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0 self-center" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 5. YouTube Thumbnail Studio Card (11 Compositions) */}
           <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 shadow-xl">
             <button
               type="button"
@@ -2532,10 +2638,10 @@ interface AudiobookQueueItem {
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-rose-300 block truncate">
-                    YouTube Thumbnail Studio
+                    5. YouTube Thumbnail Studio
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    6 High-CTR (1920×1080) Full HD Layouts
+                    11 High-CTR (1920×1080) Full HD Layouts
                   </span>
                 </div>
               </div>
@@ -2554,13 +2660,13 @@ interface AudiobookQueueItem {
             {expandedSections.thumbnail && (
               <div className="space-y-4 pt-2 border-t border-slate-800/80">
                 <p className="text-[11px] text-slate-300 leading-relaxed">
-                  Automatically syncs current book cover, title, author, and color schemes with 6 high-converting YouTube layouts.
+                  Automatically syncs current book cover, title, author, and color schemes with 11 high-converting YouTube layouts.
                 </p>
 
-                {/* 6 Layout Selector Cards */}
+                {/* 11 Layout Selector Cards */}
                 <div className="space-y-2">
                   <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                    Select Thumbnail Layout (6 Presets):
+                    Select Thumbnail Layout (11 Presets):
                   </label>
                   <div className="grid grid-cols-1 gap-2">
                     {THUMBNAIL_LAYOUT_OPTIONS.map((layout) => {
@@ -2604,6 +2710,11 @@ interface AudiobookQueueItem {
                               {layout.id === 'layout-4-isometric' && 'Angled 3D book perspective with realistic reflections and golden badges.'}
                               {layout.id === 'layout-5-bold' && 'Bold, high-visibility headline banner optimized for mobile YouTube feeds.'}
                               {layout.id === 'layout-6-action' && 'High-contrast dynamic rays, punchy bold title, and intense book presentation.'}
+                              {layout.id === 'layout-7-neon-cyber' && 'Glowing cyan/magenta laser neon frame, holographic 3D book, and cyberpunk glow.'}
+                              {layout.id === 'layout-8-vintage-gold' && 'Ornate gold filigree accents, embossed leatherbound 3D book, and royal typography.'}
+                              {layout.id === 'layout-9-floating-cards' && 'Dynamic 12-degree diagonal split background, floating hero book, and high-CTR headline.'}
+                              {layout.id === 'layout-10-podcast-cinematic' && 'Studio podcast masterclass with acoustic backdrop, verified author badge, and soft spotlight.'}
+                              {layout.id === 'layout-11-mystery-dark' && 'Dark atmospheric noir fog, cold cinematic lighting, and suspenseful thriller aesthetics.'}
                             </p>
                           </div>
                           {isSelected && (
@@ -2908,7 +3019,7 @@ interface AudiobookQueueItem {
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-purple-300 block truncate">
-                    Background Video Loops
+                    6. Ambient Video Themes
                   </span>
                   <span className="text-[10px] text-slate-400">
                     Seamless 20s Ambient Loops
@@ -3144,7 +3255,7 @@ interface AudiobookQueueItem {
             )}
           </div>
 
-          {/* 6. Background Gradient Color Presets - Collapsible Accordion Drawer */}
+          {/* 7. Background Gradient Color Presets - Collapsible Accordion Drawer */}
           <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-3 shadow-xl">
             {/* Accordion Header */}
             <button
@@ -3158,7 +3269,7 @@ interface AudiobookQueueItem {
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-amber-300 block truncate">
-                    Background Gradients & Ambient
+                    7. Background Gradients & Ambient
                   </span>
                   <span className="text-[10px] text-slate-400">
                     {AUDIOBOOK_GRADIENT_PRESETS.length} Studio Gradients
@@ -3319,6 +3430,9 @@ interface AudiobookQueueItem {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20 font-bold">
+                    {VIDEO_COMPOSITION_OPTIONS.find((c) => c.id === selectedVideoComposition)?.labelEn}
+                  </span>
                   <span className="text-[11px] font-mono text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20 font-bold">
                     {resolution === '2k' ? '2560 × 1440 (2K)' : '1920 × 1080 (FHD)'} @ 30 FPS
                   </span>
@@ -3356,6 +3470,7 @@ interface AudiobookQueueItem {
                   authorBgColor,
                   episodeTextColor,
                   episodeBgColor,
+                  videoCompositionId: selectedVideoComposition,
                 };
 
                 return (
@@ -3364,7 +3479,7 @@ interface AudiobookQueueItem {
                     style={{ aspectRatio: '16/9' }}
                   >
                     <Player
-                      key={`audiobook-player-${audioDurationSec > 0 ? audioDurationSec : 'default'}`}
+                      key={`audiobook-player-${audioDurationSec > 0 ? audioDurationSec : 'default'}-${selectedVideoComposition}`}
                       component={AudiobookComposition as any}
                       inputProps={memoizedInputProps}
                       durationInFrames={Math.max(600, audioDurationSec > 0 ? Math.round(audioDurationSec * 30) : 600)}

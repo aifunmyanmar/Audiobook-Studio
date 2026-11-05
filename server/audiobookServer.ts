@@ -194,6 +194,7 @@ export function audiobookServerPlugin(): Plugin {
           subheaderFontSize?: number;
           authorFontSize?: number;
           episodeFontSize?: number;
+          videoCompositionId?: string;
           status: 'pending' | 'rendering' | 'completed' | 'failed' | 'cancelled';
           progress: number;
           statusMessage: string;
@@ -562,6 +563,7 @@ export function audiobookServerPlugin(): Plugin {
               authorBgColor: job.authorBgColor,
               episodeTextColor: job.episodeTextColor,
               episodeBgColor: job.episodeBgColor,
+              videoCompositionId: job.videoCompositionId || 'video-comp-1-classic',
             },
           });
 
@@ -633,6 +635,7 @@ export function audiobookServerPlugin(): Plugin {
               authorBgColor: job.authorBgColor,
               episodeTextColor: job.episodeTextColor,
               episodeBgColor: job.episodeBgColor,
+              videoCompositionId: job.videoCompositionId || 'video-comp-1-classic',
             },
           });
 
@@ -894,6 +897,7 @@ export function audiobookServerPlugin(): Plugin {
                 subheaderFontSize: payload.subheaderFontSize,
                 authorFontSize: payload.authorFontSize,
                 episodeFontSize: payload.episodeFontSize,
+                videoCompositionId: payload.videoCompositionId || 'video-comp-1-classic',
                 status: 'pending',
                 progress: 0,
                 statusMessage: 'Queued for rendering...',
