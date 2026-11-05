@@ -2,6 +2,14 @@ import React from 'react';
 import { staticFile, useVideoConfig } from 'remotion';
 import { AUDIOBOOK_THEMES, AUDIOBOOK_GRADIENT_PRESETS, AudiobookThemeId } from './types';
 import { PresetRenderer } from './presets/PresetRenderer';
+import {
+  FeatherPenIcon,
+  HeadphonesIcon,
+  FlameIcon,
+  StarIcon,
+  ZapIcon,
+  BookOpenIcon,
+} from './icons';
 
 export type AudiobookThumbnailLayoutId =
   | 'layout-1-split'
@@ -171,7 +179,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
             }}
           >
-            <span style={{ fontSize: '48px', marginBottom: '12px' }}>📖</span>
+            <BookOpenIcon size={44} color="#94a3b8" style={{ marginBottom: '12px' }} />
             <span
               style={{
                 fontFamily: "'PannYeat', 'Padauk', sans-serif",
@@ -211,6 +219,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
           height: '720px',
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
+          overflow: 'hidden',
         }}
       >
         {/* Background Visualizer / Video */}
@@ -238,32 +247,37 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
           <div
             style={{
               position: 'absolute',
-              inset: '40px 60px',
+              inset: '36px 60px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              gap: '50px',
+              gap: '45px',
               zIndex: 10,
+              boxSizing: 'border-box',
             }}
           >
             {/* Left Cover Artwork */}
             <div style={{ transform: 'perspective(800px) rotateY(6deg)', filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.8))' }}>
-              {renderCover(380, 520)}
+              {renderCover(360, 490)}
             </div>
 
             {/* Right Information Container */}
             <div
               style={{
                 flex: 1,
+                minWidth: 0,
+                maxHeight: '560px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                gap: '18px',
-                padding: '30px 36px',
+                gap: '16px',
+                padding: '28px 36px',
                 borderRadius: '28px',
-                background: 'rgba(15, 23, 42, 0.85)',
+                background: 'rgba(15, 23, 42, 0.88)',
                 border: '1.5px solid rgba(255, 255, 255, 0.18)',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.7)',
+                overflow: 'hidden',
+                boxSizing: 'border-box',
               }}
             >
               {/* Top Badge Row */}
@@ -280,7 +294,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                     gap: '8px',
                   }}
                 >
-                  <span>🎧</span> AUDIOBOOK SPECIAL
+                  <HeadphonesIcon size={16} color="#94a3b8" /> AUDIOBOOK SPECIAL
                 </span>
                 {episodeText && (
                   <div
@@ -302,7 +316,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               {/* Title */}
               <h1
                 style={{
-                  fontSize: `${headerFontSize || 66}px`,
+                  fontSize: `${headerFontSize || 64}px`,
                   fontWeight: 900,
                   lineHeight: '1.25',
                   margin: 0,
@@ -319,7 +333,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               {subheader && (
                 <p
                   style={{
-                    fontSize: `${subheaderFontSize || 26}px`,
+                    fontSize: `${subheaderFontSize || 24}px`,
                     fontWeight: 600,
                     lineHeight: '1.4',
                     margin: 0,
@@ -337,17 +351,17 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '12px',
+                    gap: '10px',
                     padding: '8px 20px',
                     borderRadius: '16px',
                     background: authorBgColor || 'rgba(30, 41, 59, 0.9)',
                     border: '1px solid rgba(255,255,255,0.2)',
                     width: 'fit-content',
-                    marginTop: '8px',
+                    marginTop: '4px',
                   }}
                 >
-                  <span style={{ fontSize: '20px' }}>✍️</span>
-                  <span style={{ fontSize: `${authorFontSize || 24}px`, fontWeight: 700, color: authorColor }}>
+                  <FeatherPenIcon size={18} color={authorColor} />
+                  <span style={{ fontSize: `${authorFontSize || 22}px`, fontWeight: 700, color: authorColor }}>
                     {authorName}
                   </span>
                 </div>
@@ -363,29 +377,38 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
           <div
             style={{
               position: 'absolute',
-              inset: '30px 60px',
+              inset: '20px 60px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'space-between',
               zIndex: 10,
+              boxSizing: 'border-box',
+              overflow: 'hidden',
+              maxHeight: '680px',
             }}
           >
-            {/* Top Giant Title Banner */}
+            {/* Top Title Banner */}
             <div
               style={{
                 width: '100%',
                 textAlign: 'center',
-                padding: '16px 24px',
-                borderRadius: '24px',
+                padding: '12px 24px',
+                borderRadius: '22px',
                 background: 'rgba(15, 23, 42, 0.88)',
                 border: '1.5px solid rgba(255,255,255,0.18)',
                 boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
+                maxHeight: '170px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                boxSizing: 'border-box',
+                overflow: 'hidden',
               }}
             >
               <h1
                 style={{
-                  fontSize: `${headerFontSize || 62}px`,
+                  fontSize: `${headerFontSize || 54}px`,
                   fontWeight: 900,
                   lineHeight: '1.25',
                   margin: 0,
@@ -393,55 +416,91 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                   textShadow: '0 4px 20px rgba(0,0,0,0.9)',
                   whiteSpace: 'pre-line',
                   wordBreak: 'break-word',
+                  maxHeight: '115px',
+                  overflow: 'hidden',
                 }}
               >
                 {headerTitle}
               </h1>
               {subheader && (
-                <p style={{ fontSize: `${subheaderFontSize || 22}px`, fontWeight: 600, color: subheaderColor, margin: '6px 0 0 0' }}>
+                <p
+                  style={{
+                    fontSize: `${subheaderFontSize || 20}px`,
+                    fontWeight: 600,
+                    color: subheaderColor,
+                    margin: '4px 0 0 0',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                  }}
+                >
                   {subheader}
                 </p>
               )}
             </div>
 
-            {/* Center Hero Book Artwork */}
-            <div style={{ transform: 'perspective(900px) rotateX(4deg)', filter: 'drop-shadow(0 25px 40px rgba(0,0,0,0.9))' }}>
-              {renderCover(340, 410)}
+            {/* Center Hero Book Artwork (Compact Sizing to Prevent Overflow) */}
+            <div
+              style={{
+                transform: 'perspective(900px) rotateX(4deg)',
+                filter: 'drop-shadow(0 20px 35px rgba(0,0,0,0.9))',
+                flexShrink: 0,
+                margin: '8px 0',
+              }}
+            >
+              {renderCover(280, 340)}
             </div>
 
             {/* Bottom Row: Author Left / Episode Badge Right */}
-            <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 8px',
+                boxSizing: 'border-box',
+                flexShrink: 0,
+              }}
+            >
               {authorName ? (
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    padding: '10px 24px',
+                    gap: '10px',
+                    padding: '8px 22px',
                     borderRadius: '999px',
                     background: authorBgColor || 'rgba(15, 23, 42, 0.90)',
                     border: '1.5px solid rgba(255,255,255,0.25)',
                   }}
                 >
-                  <span style={{ fontSize: '20px' }}>✍️</span>
-                  <span style={{ fontSize: `${authorFontSize || 22}px`, fontWeight: 700, color: authorColor }}>{authorName}</span>
+                  <FeatherPenIcon size={18} color={authorColor} />
+                  <span style={{ fontSize: `${authorFontSize || 22}px`, fontWeight: 700, color: authorColor }}>
+                    {authorName}
+                  </span>
                 </div>
               ) : <div />}
 
               {episodeText && (
                 <div
                   style={{
-                    padding: '12px 36px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 32px',
                     borderRadius: '999px',
                     background: epBgColor,
                     color: epTextColor,
-                    fontSize: `${episodeFontSize || 26}px`,
+                    fontSize: `${episodeFontSize || 24}px`,
                     fontWeight: 900,
                     boxShadow: `0 0 30px ${epBgColor}aa`,
                     border: '2px solid rgba(255,255,255,0.3)',
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  🔥 {episodeText}
+                  <FlameIcon size={18} color={epTextColor} />
+                  <span>{episodeText}</span>
                 </div>
               )}
             </div>
@@ -458,6 +517,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               inset: 0,
               display: 'flex',
               zIndex: 10,
+              overflow: 'hidden',
             }}
           >
             {/* Left Content Area (60%) */}
@@ -465,13 +525,15 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               style={{
                 width: '60%',
                 height: '100%',
-                padding: '60px 50px 50px 70px',
+                padding: '50px 45px 50px 65px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                gap: '20px',
+                gap: '18px',
                 background: 'linear-gradient(to right, rgba(15,23,42,0.98) 60%, rgba(15,23,42,0.7) 90%, transparent 100%)',
                 zIndex: 2,
+                boxSizing: 'border-box',
+                overflow: 'hidden',
               }}
             >
               {episodeText && (
@@ -479,24 +541,25 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '10px',
-                    padding: '8px 24px',
+                    gap: '8px',
+                    padding: '8px 22px',
                     borderRadius: '999px',
                     background: epBgColor,
                     color: epTextColor,
-                    fontSize: `${episodeFontSize || 22}px`,
+                    fontSize: `${episodeFontSize || 20}px`,
                     fontWeight: 800,
                     width: 'fit-content',
                     boxShadow: `0 0 20px ${epBgColor}88`,
                   }}
                 >
-                  <span>🎧</span> {episodeText}
+                  <HeadphonesIcon size={16} color={epTextColor} />
+                  <span>{episodeText}</span>
                 </div>
               )}
 
               <h1
                 style={{
-                  fontSize: `${headerFontSize || 68}px`,
+                  fontSize: `${headerFontSize || 64}px`,
                   fontWeight: 900,
                   lineHeight: '1.22',
                   margin: 0,
@@ -510,7 +573,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               </h1>
 
               {subheader && (
-                <p style={{ fontSize: `${subheaderFontSize || 26}px`, fontWeight: 600, color: subheaderColor, margin: 0 }}>
+                <p style={{ fontSize: `${subheaderFontSize || 24}px`, fontWeight: 600, color: subheaderColor, margin: 0 }}>
                   {subheader}
                 </p>
               )}
@@ -520,17 +583,19 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '14px',
-                    padding: '10px 24px',
+                    gap: '12px',
+                    padding: '8px 22px',
                     borderRadius: '16px',
                     background: authorBgColor || 'rgba(30,41,59,0.9)',
                     border: '1.5px solid rgba(255,255,255,0.2)',
                     width: 'fit-content',
-                    marginTop: '10px',
+                    marginTop: '6px',
                   }}
                 >
-                  <span style={{ fontSize: '22px' }}>✍️</span>
-                  <span style={{ fontSize: `${authorFontSize || 26}px`, fontWeight: 700, color: authorColor }}>{authorName}</span>
+                  <FeatherPenIcon size={20} color={authorColor} />
+                  <span style={{ fontSize: `${authorFontSize || 24}px`, fontWeight: 700, color: authorColor }}>
+                    {authorName}
+                  </span>
                 </div>
               )}
             </div>
@@ -575,22 +640,24 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
           <div
             style={{
               position: 'absolute',
-              inset: '40px 60px',
+              inset: '36px 60px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '40px',
               zIndex: 10,
+              boxSizing: 'border-box',
             }}
           >
             {/* Left 3D Isometric Book Display */}
             <div
               style={{
-                transform: 'perspective(1000px) rotateY(-18deg) rotateX(8deg) scale(1.05)',
+                transform: 'perspective(1000px) rotateY(-18deg) rotateX(8deg) scale(1.02)',
                 filter: 'drop-shadow(25px 25px 35px rgba(0,0,0,0.85))',
+                flexShrink: 0,
               }}
             >
-              {renderCover(390, 530, {
+              {renderCover(370, 500, {
                 borderRight: '12px solid #334155',
                 borderBottom: '8px solid #1e293b',
               })}
@@ -600,36 +667,45 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
             <div
               style={{
                 flex: 1,
+                minWidth: 0,
+                maxHeight: '560px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                padding: '36px',
-                borderRadius: '32px',
+                padding: '32px',
+                borderRadius: '30px',
                 background: 'rgba(15, 23, 42, 0.90)',
                 border: '1.5px solid rgba(255,255,255,0.2)',
                 boxShadow: '0 24px 60px rgba(0,0,0,0.8)',
+                overflow: 'hidden',
+                boxSizing: 'border-box',
               }}
             >
               {episodeText && (
                 <div
                   style={{
-                    padding: '10px 28px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 24px',
                     borderRadius: '999px',
                     background: epBgColor,
                     color: epTextColor,
-                    fontSize: `${episodeFontSize || 26}px`,
+                    fontSize: `${episodeFontSize || 22}px`,
                     fontWeight: 900,
                     width: 'fit-content',
                     boxShadow: `0 0 25px ${epBgColor}99`,
                   }}
                 >
-                  ⭐ {episodeText} ⭐
+                  <StarIcon size={16} color={epTextColor} />
+                  <span>{episodeText}</span>
+                  <StarIcon size={16} color={epTextColor} />
                 </div>
               )}
 
               <h1
                 style={{
-                  fontSize: `${headerFontSize || 64}px`,
+                  fontSize: `${headerFontSize || 62}px`,
                   fontWeight: 900,
                   lineHeight: '1.25',
                   margin: 0,
@@ -643,7 +719,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               </h1>
 
               {subheader && (
-                <p style={{ fontSize: `${subheaderFontSize || 24}px`, fontWeight: 600, color: subheaderColor, margin: 0 }}>
+                <p style={{ fontSize: `${subheaderFontSize || 22}px`, fontWeight: 600, color: subheaderColor, margin: 0 }}>
                   {subheader}
                 </p>
               )}
@@ -652,17 +728,19 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '12px',
-                  marginTop: '10px',
-                  padding: '10px 22px',
+                  gap: '10px',
+                  marginTop: '8px',
+                  padding: '8px 20px',
                   borderRadius: '16px',
                   background: authorBgColor || 'rgba(30,41,59,0.9)',
                   border: '1.5px solid rgba(255,255,255,0.2)',
                   width: 'fit-content',
                 }}
               >
-                <span style={{ fontSize: '22px' }}>✍️</span>
-                <span style={{ fontSize: `${authorFontSize || 24}px`, fontWeight: 700, color: authorColor }}>{authorName}</span>
+                <FeatherPenIcon size={18} color={authorColor} />
+                <span style={{ fontSize: `${authorFontSize || 22}px`, fontWeight: 700, color: authorColor }}>
+                  {authorName}
+                </span>
               </div>
             </div>
           </div>
@@ -675,18 +753,21 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
           <div
             style={{
               position: 'absolute',
-              inset: '30px 50px',
+              inset: '24px 50px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
               zIndex: 10,
+              boxSizing: 'border-box',
+              overflow: 'hidden',
+              maxHeight: '672px',
             }}
           >
             {/* Top Full Banner Title */}
             <div
               style={{
                 width: '100%',
-                padding: '20px 30px',
+                padding: '16px 28px',
                 borderRadius: '24px',
                 background: 'linear-gradient(to right, rgba(15,23,42,0.95), rgba(30,41,59,0.95))',
                 border: '2px solid rgba(255,255,255,0.25)',
@@ -694,12 +775,14 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                gap: '20px',
+                boxSizing: 'border-box',
               }}
             >
-              <div>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <h1
                   style={{
-                    fontSize: `${headerFontSize || 66}px`,
+                    fontSize: `${headerFontSize || 58}px`,
                     fontWeight: 900,
                     lineHeight: '1.2',
                     margin: 0,
@@ -707,12 +790,24 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                     textShadow: '0 4px 20px rgba(0,0,0,0.9)',
                     whiteSpace: 'pre-line',
                     wordBreak: 'break-word',
+                    maxHeight: '130px',
+                    overflow: 'hidden',
                   }}
                 >
                   {headerTitle}
                 </h1>
                 {subheader && (
-                  <p style={{ fontSize: `${subheaderFontSize || 22}px`, fontWeight: 600, color: subheaderColor, margin: '4px 0 0 0' }}>
+                  <p
+                    style={{
+                      fontSize: `${subheaderFontSize || 20}px`,
+                      fontWeight: 600,
+                      color: subheaderColor,
+                      margin: '4px 0 0 0',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                    }}
+                  >
                     {subheader}
                   </p>
                 )}
@@ -721,14 +816,15 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               {episodeText && (
                 <div
                   style={{
-                    padding: '16px 36px',
+                    padding: '12px 30px',
                     borderRadius: '999px',
                     background: epBgColor,
                     color: epTextColor,
-                    fontSize: `${episodeFontSize || 32}px`,
+                    fontSize: `${episodeFontSize || 28}px`,
                     fontWeight: 900,
                     boxShadow: `0 0 35px ${epBgColor}bb`,
                     flexShrink: 0,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {episodeText}
@@ -743,34 +839,35 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 alignItems: 'flex-end',
                 justifyContent: 'space-between',
                 width: '100%',
+                boxSizing: 'border-box',
               }}
             >
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '14px',
-                  padding: '24px 32px',
-                  borderRadius: '24px',
+                  gap: '10px',
+                  padding: '20px 28px',
+                  borderRadius: '22px',
                   background: authorBgColor || 'rgba(15, 23, 42, 0.90)',
                   border: '1.5px solid rgba(255,255,255,0.2)',
-                  maxWidth: '550px',
+                  maxWidth: '520px',
                 }}
               >
-                <span style={{ fontSize: '15px', fontWeight: 800, color: '#94a3b8', letterSpacing: '0.1em' }}>
+                <span style={{ fontSize: '14px', fontWeight: 800, color: '#94a3b8', letterSpacing: '0.1em' }}>
                   မြန်မာ အသံထွက်ဝတ္ထုရှည်
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '28px' }}>✍️</span>
-                  <span style={{ fontSize: `${authorFontSize || 32}px`, fontWeight: 800, color: authorColor }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <FeatherPenIcon size={22} color={authorColor} />
+                  <span style={{ fontSize: `${authorFontSize || 28}px`, fontWeight: 800, color: authorColor }}>
                     {authorName}
                   </span>
                 </div>
               </div>
 
-              {/* Right Floating Artwork */}
+              {/* Right Floating Artwork (Controlled Size to Prevent Canvas Overflow) */}
               <div style={{ transform: 'scale(0.95)', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.9))' }}>
-                {renderCover(340, 420)}
+                {renderCover(290, 360)}
               </div>
             </div>
           </div>
@@ -817,39 +914,42 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               }}
             />
 
-            {/* Left Content Area (~58% width) */}
+            {/* Left Content Area (~56% width) */}
             <div
               style={{
-                width: '58%',
+                width: '56%',
                 height: '100%',
-                padding: '45px 35px 45px 65px',
+                padding: '40px 30px 40px 60px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                gap: '16px',
+                gap: '14px',
                 zIndex: 10,
+                boxSizing: 'border-box',
+                overflow: 'hidden',
               }}
             >
               {/* Badges Row */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '8px',
-                    padding: '8px 20px',
+                    padding: '8px 18px',
                     borderRadius: '8px',
                     background: 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
                     border: '1.5px solid rgba(239, 68, 68, 0.8)',
                     boxShadow: '0 0 25px rgba(239, 68, 68, 0.6), 0 4px 12px rgba(0,0,0,0.8)',
                     color: '#ffffff',
-                    fontSize: '15px',
+                    fontSize: '14px',
                     fontWeight: 900,
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
                   }}
                 >
-                  <span>💥</span> ACTION / THRILLER
+                  <ZapIcon size={15} color="#ffffff" />
+                  <span>ACTION / THRILLER</span>
                 </div>
 
                 {episodeText && (
@@ -858,17 +958,18 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '8px',
-                      padding: '8px 22px',
+                      padding: '8px 20px',
                       borderRadius: '8px',
                       background: epBgColor || 'linear-gradient(135deg, #ea580c 0%, #b45309 100%)',
                       color: epTextColor,
-                      fontSize: `${episodeFontSize || 22}px`,
+                      fontSize: `${episodeFontSize || 20}px`,
                       fontWeight: 900,
                       boxShadow: '0 0 25px rgba(234, 88, 12, 0.7)',
                       border: '1.5px solid rgba(251, 146, 60, 0.8)',
                     }}
                   >
-                    🔥 {episodeText}
+                    <FlameIcon size={16} color={epTextColor} />
+                    <span>{episodeText}</span>
                   </div>
                 )}
               </div>
@@ -876,7 +977,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               {/* Giant Explosive Action Title */}
               <h1
                 style={{
-                  fontSize: `${headerFontSize || 68}px`,
+                  fontSize: `${headerFontSize || 64}px`,
                   fontWeight: 950,
                   lineHeight: '1.22',
                   margin: 0,
@@ -895,7 +996,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               {subheader && (
                 <div
                   style={{
-                    padding: '8px 18px',
+                    padding: '8px 16px',
                     borderRadius: '10px',
                     background: 'rgba(15, 23, 42, 0.85)',
                     borderLeft: '4px solid #ef4444',
@@ -908,7 +1009,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                 >
                   <p
                     style={{
-                      fontSize: `${subheaderFontSize || 24}px`,
+                      fontSize: `${subheaderFontSize || 22}px`,
                       fontWeight: 700,
                       color: subheaderColor,
                       margin: 0,
@@ -927,20 +1028,20 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    padding: '8px 22px',
+                    gap: '10px',
+                    padding: '8px 20px',
                     borderRadius: '12px',
                     background: authorBgColor || 'rgba(24, 24, 27, 0.95)',
                     border: '1.5px solid rgba(239, 68, 68, 0.4)',
                     boxShadow: '0 10px 25px rgba(0,0,0,0.8)',
                     width: 'fit-content',
-                    marginTop: '6px',
+                    marginTop: '4px',
                   }}
                 >
-                  <span style={{ fontSize: '20px' }}>⚔️</span>
+                  <FeatherPenIcon size={18} color={authorColor} />
                   <span
                     style={{
-                      fontSize: `${authorFontSize || 24}px`,
+                      fontSize: `${authorFontSize || 22}px`,
                       fontWeight: 800,
                       color: authorColor,
                     }}
@@ -951,27 +1052,29 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
               )}
             </div>
 
-            {/* Right Action Hero 3D Artwork (~42% width) */}
+            {/* Right Action Hero 3D Artwork (~44% width) */}
             <div
               style={{
-                width: '42%',
+                width: '44%',
                 height: '100%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                paddingRight: '45px',
+                paddingRight: '40px',
                 zIndex: 10,
+                boxSizing: 'border-box',
               }}
             >
               <div
                 style={{
-                  transform: 'perspective(1000px) rotateY(-12deg) rotateZ(1.5deg) scale(1.06)',
+                  transform: 'perspective(1000px) rotateY(-12deg) rotateZ(1.5deg) scale(1.04)',
                   filter:
                     'drop-shadow(0 0 50px rgba(220, 38, 38, 0.65)) drop-shadow(0 30px 60px rgba(0,0,0,0.98))',
                   position: 'relative',
+                  flexShrink: 0,
                 }}
               >
-                {renderCover(390, 530, {
+                {renderCover(370, 500, {
                   border: '3px solid rgba(239, 68, 68, 0.6)',
                   boxShadow: '0 0 40px rgba(220,38,38,0.5)',
                 })}

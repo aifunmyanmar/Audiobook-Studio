@@ -4,6 +4,7 @@ import { AudiobookProps, AUDIOBOOK_THEMES, AUDIOBOOK_GRADIENT_PRESETS } from './
 import { PresetRenderer } from './presets/PresetRenderer';
 import { ArtworkHeroCard } from './ArtworkHeroCard';
 import { AudioWaveformVisualizer } from './AudioWaveformVisualizer';
+import { FeatherPenIcon } from './icons';
 
 export const AudiobookComposition: React.FC<AudiobookProps> = ({
   headerTitle = 'သူ့ကိုမှ ချစ်မိသူ',
@@ -298,7 +299,7 @@ export const AudiobookComposition: React.FC<AudiobookProps> = ({
                   zIndex: 10,
                 }}
               >
-                <span style={{ fontSize: '20px' }}>✍️</span>
+                <FeatherPenIcon size={20} color={authorTextColor || '#fbbf24'} />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                     စာရေးသူ

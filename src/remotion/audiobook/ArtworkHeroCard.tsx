@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCurrentFrame, Img, staticFile } from 'remotion';
+import { BookOpenIcon } from './icons';
 
 interface ArtworkHeroCardProps {
   artworkUrl?: string;
@@ -192,7 +193,7 @@ export const ArtworkHeroCard: React.FC<ArtworkHeroCardProps> = ({
                   fontSize: '16px',
                 }}
               >
-                📖
+                <BookOpenIcon size={18} color="#fbbf24" />
               </div>
               <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
                 High Definition Audio

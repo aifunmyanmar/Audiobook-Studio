@@ -109,6 +109,17 @@ interface SavedAudiobookSettings {
   episodeTextColor?: string;
   episodeBgColor?: string;
   bgVideoUrl?: string;
+  thumbHeaderFontSize?: number;
+  thumbSubheaderFontSize?: number;
+  thumbAuthorFontSize?: number;
+  thumbEpisodeFontSize?: number;
+  thumbHeaderTextColor?: string;
+  thumbSubheaderTextColor?: string;
+  thumbAuthorTextColor?: string;
+  thumbAuthorBgColor?: string;
+  thumbEpisodeTextColor?: string;
+  thumbEpisodeBgColor?: string;
+  selectedThumbnailLayout?: AudiobookThumbnailLayoutId;
   generatedAnimeResult?: {
     imageUrl: string;
     imagePath: string;
@@ -318,7 +329,9 @@ interface AudiobookQueueItem {
   const [isStyleDropdownOpen, setIsStyleDropdownOpen] = useState<boolean>(false);
 
   // YouTube Thumbnail Studio States
-  const [selectedThumbnailLayout, setSelectedThumbnailLayout] = useState<AudiobookThumbnailLayoutId>('layout-1-split');
+  const [selectedThumbnailLayout, setSelectedThumbnailLayout] = useState<AudiobookThumbnailLayoutId>(
+    (initialSettings.selectedThumbnailLayout as AudiobookThumbnailLayoutId) || 'layout-1-split'
+  );
   const [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState<boolean>(false);
   const [thumbnailToast, setThumbnailToast] = useState<{
     status: 'idle' | 'generating' | 'success' | 'error';
@@ -330,18 +343,17 @@ interface AudiobookQueueItem {
   const [activePreviewMode, setActivePreviewMode] = useState<'video' | 'thumbnail'>('video');
   const [folderOpenFeedback, setFolderOpenFeedback] = useState<string | null>(null);
 
-  // Dedicated Thumbnail Custom Typography & Color Overrides
-  const [useCustomThumbStyles, setUseCustomThumbStyles] = useState<boolean>(false);
-  const [thumbHeaderFontSize, setThumbHeaderFontSize] = useState<number>(68);
-  const [thumbSubheaderFontSize, setThumbSubheaderFontSize] = useState<number>(24);
-  const [thumbAuthorFontSize, setThumbAuthorFontSize] = useState<number>(24);
-  const [thumbEpisodeFontSize, setThumbEpisodeFontSize] = useState<number>(24);
-  const [thumbHeaderTextColor, setThumbHeaderTextColor] = useState<string>('');
-  const [thumbSubheaderTextColor, setThumbSubheaderTextColor] = useState<string>('');
-  const [thumbAuthorTextColor, setThumbAuthorTextColor] = useState<string>('');
-  const [thumbAuthorBgColor, setThumbAuthorBgColor] = useState<string>('');
-  const [thumbEpisodeTextColor, setThumbEpisodeTextColor] = useState<string>('');
-  const [thumbEpisodeBgColor, setThumbEpisodeBgColor] = useState<string>('');
+  // Dedicated YouTube Thumbnail Typography & Color Settings (100% independent from Video Loop)
+  const [thumbHeaderFontSize, setThumbHeaderFontSize] = useState<number>(initialSettings.thumbHeaderFontSize ?? 64);
+  const [thumbSubheaderFontSize, setThumbSubheaderFontSize] = useState<number>(initialSettings.thumbSubheaderFontSize ?? 22);
+  const [thumbAuthorFontSize, setThumbAuthorFontSize] = useState<number>(initialSettings.thumbAuthorFontSize ?? 22);
+  const [thumbEpisodeFontSize, setThumbEpisodeFontSize] = useState<number>(initialSettings.thumbEpisodeFontSize ?? 22);
+  const [thumbHeaderTextColor, setThumbHeaderTextColor] = useState<string>(initialSettings.thumbHeaderTextColor || '');
+  const [thumbSubheaderTextColor, setThumbSubheaderTextColor] = useState<string>(initialSettings.thumbSubheaderTextColor || '');
+  const [thumbAuthorTextColor, setThumbAuthorTextColor] = useState<string>(initialSettings.thumbAuthorTextColor || '');
+  const [thumbAuthorBgColor, setThumbAuthorBgColor] = useState<string>(initialSettings.thumbAuthorBgColor || '');
+  const [thumbEpisodeTextColor, setThumbEpisodeTextColor] = useState<string>(initialSettings.thumbEpisodeTextColor || '');
+  const [thumbEpisodeBgColor, setThumbEpisodeBgColor] = useState<string>(initialSettings.thumbEpisodeBgColor || '');
 
   const handleSyncThumbStylesFromVideo = () => {
     setThumbHeaderFontSize(headerFontSize);
@@ -354,7 +366,19 @@ interface AudiobookQueueItem {
     setThumbAuthorBgColor(authorBgColor);
     setThumbEpisodeTextColor(episodeTextColor);
     setThumbEpisodeBgColor(episodeBgColor);
-    setUseCustomThumbStyles(true);
+  };
+
+  const handleResetThumbStyles = () => {
+    setThumbHeaderFontSize(64);
+    setThumbSubheaderFontSize(22);
+    setThumbAuthorFontSize(22);
+    setThumbEpisodeFontSize(22);
+    setThumbHeaderTextColor('');
+    setThumbSubheaderTextColor('');
+    setThumbAuthorTextColor('');
+    setThumbAuthorBgColor('');
+    setThumbEpisodeTextColor('');
+    setThumbEpisodeBgColor('');
   };
 
   // Active theme metadata
@@ -399,6 +423,17 @@ interface AudiobookQueueItem {
         episodeTextColor,
         episodeBgColor,
         bgVideoUrl,
+        thumbHeaderFontSize,
+        thumbSubheaderFontSize,
+        thumbAuthorFontSize,
+        thumbEpisodeFontSize,
+        thumbHeaderTextColor,
+        thumbSubheaderTextColor,
+        thumbAuthorTextColor,
+        thumbAuthorBgColor,
+        thumbEpisodeTextColor,
+        thumbEpisodeBgColor,
+        selectedThumbnailLayout,
         generatedAnimeResult,
         webAudioUrlInput,
         geminiApiKey,
@@ -430,6 +465,24 @@ interface AudiobookQueueItem {
     selectedThemeId,
     gradientCategory,
     resolution,
+    headerTextColor,
+    subheaderTextColor,
+    authorTextColor,
+    authorBgColor,
+    episodeTextColor,
+    episodeBgColor,
+    bgVideoUrl,
+    thumbHeaderFontSize,
+    thumbSubheaderFontSize,
+    thumbAuthorFontSize,
+    thumbEpisodeFontSize,
+    thumbHeaderTextColor,
+    thumbSubheaderTextColor,
+    thumbAuthorTextColor,
+    thumbAuthorBgColor,
+    thumbEpisodeTextColor,
+    thumbEpisodeBgColor,
+    selectedThumbnailLayout,
     generatedAnimeResult,
     webAudioUrlInput,
     geminiApiKey,
@@ -1074,21 +1127,21 @@ interface AudiobookQueueItem {
         subheader,
         authorName,
         episodeText,
-        headerFontSize: useCustomThumbStyles ? thumbHeaderFontSize : undefined,
-        subheaderFontSize: useCustomThumbStyles ? thumbSubheaderFontSize : undefined,
-        authorFontSize: useCustomThumbStyles ? thumbAuthorFontSize : undefined,
-        episodeFontSize: useCustomThumbStyles ? thumbEpisodeFontSize : undefined,
+        headerFontSize: thumbHeaderFontSize,
+        subheaderFontSize: thumbSubheaderFontSize,
+        authorFontSize: thumbAuthorFontSize,
+        episodeFontSize: thumbEpisodeFontSize,
         artworkUrl,
         artworkShape,
         themeId: selectedThemeId,
         gradientId: selectedGradientId,
         bgVideoUrl,
-        headerTextColor: (useCustomThumbStyles && thumbHeaderTextColor) ? thumbHeaderTextColor : headerTextColor,
-        subheaderTextColor: (useCustomThumbStyles && thumbSubheaderTextColor) ? thumbSubheaderTextColor : subheaderTextColor,
-        authorTextColor: (useCustomThumbStyles && thumbAuthorTextColor) ? thumbAuthorTextColor : authorTextColor,
-        authorBgColor: (useCustomThumbStyles && thumbAuthorBgColor) ? thumbAuthorBgColor : authorBgColor,
-        episodeTextColor: (useCustomThumbStyles && thumbEpisodeTextColor) ? thumbEpisodeTextColor : episodeTextColor,
-        episodeBgColor: (useCustomThumbStyles && thumbEpisodeBgColor) ? thumbEpisodeBgColor : episodeBgColor,
+        headerTextColor: thumbHeaderTextColor || undefined,
+        subheaderTextColor: thumbSubheaderTextColor || undefined,
+        authorTextColor: thumbAuthorTextColor || undefined,
+        authorBgColor: thumbAuthorBgColor || undefined,
+        episodeTextColor: thumbEpisodeTextColor || undefined,
+        episodeBgColor: thumbEpisodeBgColor || undefined,
       };
       const res = await fetch('/api/audiobook/generate-thumbnail', {
         method: 'POST',
@@ -2143,10 +2196,10 @@ interface AudiobookQueueItem {
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-indigo-300 block truncate">
-                    3. Book Details & Typography
+                    3. Book Details & Video Loop Typography
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    Title, Author, Font Sizes & Colors
+                    Title, Author, Video Loop Font Sizes & Colors
                   </span>
                 </div>
               </div>
@@ -2562,142 +2615,188 @@ interface AudiobookQueueItem {
                   </div>
                 </div>
 
-                {/* Dedicated Thumbnail Typography & Color Customization Controls */}
-                <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/90 space-y-3 shadow-inner">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-slate-200 flex items-center gap-1.5 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={useCustomThumbStyles}
-                        onChange={(e) => {
-                          if (e.target.checked && !useCustomThumbStyles) {
-                            handleSyncThumbStylesFromVideo();
-                          } else {
-                            setUseCustomThumbStyles(e.target.checked);
-                          }
-                        }}
-                        className="rounded border-slate-700 bg-slate-900 text-rose-500 focus:ring-rose-500/30 w-4 h-4"
-                      />
-                      <ImageIcon className="w-3.5 h-3.5 text-rose-400 inline mr-1.5" /><span>Customize Thumbnail Font Sizes & Colors</span>
-                    </label>
+                {/* Dedicated Thumbnail Typography & Color Customization Controls (100% Decoupled from Video Loop) */}
+                <div className="p-4 rounded-2xl bg-slate-950/90 border border-rose-500/30 space-y-3.5 shadow-inner">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                        <Type className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-rose-200 block">Thumbnail Typography & Colors</span>
+                        <span className="text-[10px] text-slate-400">Settings here ONLY apply to YouTube Thumbnail</span>
+                      </div>
+                    </div>
 
-                    {useCustomThumbStyles && (
+                    <div className="flex items-center gap-1.5">
                       <button
                         type="button"
                         onClick={handleSyncThumbStylesFromVideo}
-                        className="text-[10px] text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/20 transition-all font-semibold flex items-center gap-1"
+                        className="text-[10px] text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 px-2 py-1 rounded-lg border border-amber-500/25 transition-all font-semibold flex items-center gap-1"
                         title="Copy text sizes and colors from current video settings"
                       >
                         <RotateCcw className="w-3 h-3" />
                         <span>Sync from Video</span>
                       </button>
-                    )}
+                      <button
+                        type="button"
+                        onClick={handleResetThumbStyles}
+                        className="text-[10px] text-slate-400 hover:text-slate-200 bg-slate-800/60 hover:bg-slate-800 px-2 py-1 rounded-lg border border-slate-700 transition-all font-semibold"
+                        title="Reset thumbnail styles to defaults"
+                      >
+                        Reset
+                      </button>
+                    </div>
                   </div>
 
-                  {useCustomThumbStyles && (
-                    <div className="space-y-3 pt-2 border-t border-slate-800/80 animate-fade-in text-xs">
-                      {/* Thumbnail Header Font Size */}
+                  <div className="space-y-3 text-xs">
+                    {/* Thumbnail Header Font Size */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-slate-300">
+                        <span>Title Font Size:</span>
+                        <span className="font-mono text-rose-400 font-bold">{thumbHeaderFontSize}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={36}
+                        max={120}
+                        step={2}
+                        value={thumbHeaderFontSize}
+                        onChange={(e) => setThumbHeaderFontSize(Number(e.target.value))}
+                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                      />
+                    </div>
+
+                    {/* Thumbnail Subheader Font Size */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-slate-300">
+                        <span>Subtitle Font Size:</span>
+                        <span className="font-mono text-amber-400 font-bold">{thumbSubheaderFontSize}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={14}
+                        max={50}
+                        step={1}
+                        value={thumbSubheaderFontSize}
+                        onChange={(e) => setThumbSubheaderFontSize(Number(e.target.value))}
+                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                      />
+                    </div>
+
+                    {/* Thumbnail Author Font Size */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-slate-300">
+                        <span>Author Font Size:</span>
+                        <span className="font-mono text-sky-400 font-bold">{thumbAuthorFontSize}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={14}
+                        max={44}
+                        step={1}
+                        value={thumbAuthorFontSize}
+                        onChange={(e) => setThumbAuthorFontSize(Number(e.target.value))}
+                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-500"
+                      />
+                    </div>
+
+                    {/* Thumbnail Episode Font Size */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-slate-300">
+                        <span>Episode Badge Font Size:</span>
+                        <span className="font-mono text-emerald-400 font-bold">{thumbEpisodeFontSize}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={14}
+                        max={40}
+                        step={1}
+                        value={thumbEpisodeFontSize}
+                        onChange={(e) => setThumbEpisodeFontSize(Number(e.target.value))}
+                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                      />
+                    </div>
+
+                    {/* Quick Color Overrides for Thumbnail */}
+                    <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-slate-800/80">
                       <div className="space-y-1">
-                        <div className="flex items-center justify-between text-slate-300">
-                          <span>Title Font Size:</span>
-                          <span className="font-mono text-rose-400 font-bold">{thumbHeaderFontSize}px</span>
+                        <label className="text-[10px] text-slate-400">Title Color</label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="color"
+                            value={thumbHeaderTextColor || '#ffffff'}
+                            onChange={(e) => setThumbHeaderTextColor(e.target.value)}
+                            className="w-7 h-7 rounded-lg cursor-pointer border border-slate-700 bg-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setThumbHeaderTextColor('')}
+                            className="text-[10px] text-slate-400 hover:text-white"
+                          >
+                            {thumbHeaderTextColor ? 'Clear' : 'Default'}
+                          </button>
                         </div>
-                        <input
-                          type="range"
-                          min={40}
-                          max={130}
-                          step={2}
-                          value={thumbHeaderFontSize}
-                          onChange={(e) => setThumbHeaderFontSize(Number(e.target.value))}
-                          className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
-                        />
                       </div>
 
-                      {/* Thumbnail Subheader Font Size */}
                       <div className="space-y-1">
-                        <div className="flex items-center justify-between text-slate-300">
-                          <span>Subtitle Font Size:</span>
-                          <span className="font-mono text-amber-400 font-bold">{thumbSubheaderFontSize}px</span>
+                        <label className="text-[10px] text-slate-400">Author Color</label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="color"
+                            value={thumbAuthorTextColor || '#fbbf24'}
+                            onChange={(e) => setThumbAuthorTextColor(e.target.value)}
+                            className="w-7 h-7 rounded-lg cursor-pointer border border-slate-700 bg-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setThumbAuthorTextColor('')}
+                            className="text-[10px] text-slate-400 hover:text-white"
+                          >
+                            {thumbAuthorTextColor ? 'Clear' : 'Default'}
+                          </button>
                         </div>
-                        <input
-                          type="range"
-                          min={16}
-                          max={60}
-                          step={1}
-                          value={thumbSubheaderFontSize}
-                          onChange={(e) => setThumbSubheaderFontSize(Number(e.target.value))}
-                          className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                        />
                       </div>
 
-                      {/* Thumbnail Author Font Size */}
                       <div className="space-y-1">
-                        <div className="flex items-center justify-between text-slate-300">
-                          <span>Author Font Size:</span>
-                          <span className="font-mono text-sky-400 font-bold">{thumbAuthorFontSize}px</span>
+                        <label className="text-[10px] text-slate-400">Author Background</label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="color"
+                            value={thumbAuthorBgColor || '#1e293b'}
+                            onChange={(e) => setThumbAuthorBgColor(e.target.value)}
+                            className="w-7 h-7 rounded-lg cursor-pointer border border-slate-700 bg-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setThumbAuthorBgColor('')}
+                            className="text-[10px] text-slate-400 hover:text-white"
+                          >
+                            {thumbAuthorBgColor ? 'Clear' : 'Default'}
+                          </button>
                         </div>
-                        <input
-                          type="range"
-                          min={14}
-                          max={50}
-                          step={1}
-                          value={thumbAuthorFontSize}
-                          onChange={(e) => setThumbAuthorFontSize(Number(e.target.value))}
-                          className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-500"
-                        />
                       </div>
 
-                      {/* Thumbnail Episode Font Size */}
                       <div className="space-y-1">
-                        <div className="flex items-center justify-between text-slate-300">
-                          <span>Episode Badge Font Size:</span>
-                          <span className="font-mono text-emerald-400 font-bold">{thumbEpisodeFontSize}px</span>
-                        </div>
-                        <input
-                          type="range"
-                          min={14}
-                          max={50}
-                          step={1}
-                          value={thumbEpisodeFontSize}
-                          onChange={(e) => setThumbEpisodeFontSize(Number(e.target.value))}
-                          className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                        />
-                      </div>
-
-                      {/* Quick Color Overrides for Thumbnail */}
-                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/80">
-                        <div className="space-y-1">
-                          <label className="text-[10px] text-slate-400">Title Color</label>
-                          <div className="flex items-center gap-1.5">
-                            <input
-                              type="color"
-                              value={thumbHeaderTextColor || '#ffffff'}
-                              onChange={(e) => setThumbHeaderTextColor(e.target.value)}
-                              className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent"
-                            />
-                            <span className="font-mono text-[10px] text-slate-400 truncate">
-                              {thumbHeaderTextColor || 'Default'}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="space-y-1">
-                          <label className="text-[10px] text-slate-400">Author Color</label>
-                          <div className="flex items-center gap-1.5">
-                            <input
-                              type="color"
-                              value={thumbAuthorTextColor || '#fbbf24'}
-                              onChange={(e) => setThumbAuthorTextColor(e.target.value)}
-                              className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent"
-                            />
-                            <span className="font-mono text-[10px] text-slate-400 truncate">
-                              {thumbAuthorTextColor || 'Default'}
-                            </span>
-                          </div>
+                        <label className="text-[10px] text-slate-400">Episode Badge Bg</label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="color"
+                            value={thumbEpisodeBgColor || '#dc2626'}
+                            onChange={(e) => setThumbEpisodeBgColor(e.target.value)}
+                            className="w-7 h-7 rounded-lg cursor-pointer border border-slate-700 bg-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setThumbEpisodeBgColor('')}
+                            className="text-[10px] text-slate-400 hover:text-white"
+                          >
+                            {thumbEpisodeBgColor ? 'Clear' : 'Default'}
+                          </button>
                         </div>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* Switcher & Action Buttons */}
@@ -3286,28 +3385,28 @@ interface AudiobookQueueItem {
                 style={{ aspectRatio: '16/9' }}
               >
                 <Player
-                  key={`audiobook-thumbnail-${selectedThumbnailLayout}-${artworkUrl || 'no-art'}-${headerTitle}`}
+                  key={`audiobook-thumbnail-${selectedThumbnailLayout}-${artworkUrl || 'no-art'}-${headerTitle}-${thumbHeaderFontSize}-${thumbHeaderTextColor}`}
                   component={AudiobookThumbnailComposition as any}
                   inputProps={{
                     headerTitle,
                     subheader,
                     authorName,
                     episodeText,
-                    headerFontSize: useCustomThumbStyles ? thumbHeaderFontSize : headerFontSize,
-                    subheaderFontSize: useCustomThumbStyles ? thumbSubheaderFontSize : subheaderFontSize,
-                    authorFontSize: useCustomThumbStyles ? thumbAuthorFontSize : authorFontSize,
-                    episodeFontSize: useCustomThumbStyles ? thumbEpisodeFontSize : episodeFontSize,
+                    headerFontSize: thumbHeaderFontSize,
+                    subheaderFontSize: thumbSubheaderFontSize,
+                    authorFontSize: thumbAuthorFontSize,
+                    episodeFontSize: thumbEpisodeFontSize,
                     artworkUrl,
                     artworkShape,
                     themeId: selectedThemeId,
                     gradientId: selectedGradientId,
                     bgVideoUrl,
-                    headerTextColor: (useCustomThumbStyles && thumbHeaderTextColor) ? thumbHeaderTextColor : headerTextColor,
-                    subheaderTextColor: (useCustomThumbStyles && thumbSubheaderTextColor) ? thumbSubheaderTextColor : subheaderTextColor,
-                    authorTextColor: (useCustomThumbStyles && thumbAuthorTextColor) ? thumbAuthorTextColor : authorTextColor,
-                    authorBgColor: (useCustomThumbStyles && thumbAuthorBgColor) ? thumbAuthorBgColor : authorBgColor,
-                    episodeTextColor: (useCustomThumbStyles && thumbEpisodeTextColor) ? thumbEpisodeTextColor : episodeTextColor,
-                    episodeBgColor: (useCustomThumbStyles && thumbEpisodeBgColor) ? thumbEpisodeBgColor : episodeBgColor,
+                    headerTextColor: thumbHeaderTextColor || undefined,
+                    subheaderTextColor: thumbSubheaderTextColor || undefined,
+                    authorTextColor: thumbAuthorTextColor || undefined,
+                    authorBgColor: thumbAuthorBgColor || undefined,
+                    episodeTextColor: thumbEpisodeTextColor || undefined,
+                    episodeBgColor: thumbEpisodeBgColor || undefined,
                     layoutId: selectedThumbnailLayout,
                   }}
                   durationInFrames={1}
