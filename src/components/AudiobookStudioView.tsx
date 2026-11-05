@@ -7,7 +7,12 @@ import {
   THUMBNAIL_LAYOUT_OPTIONS,
 } from '../remotion/audiobook/AudiobookThumbnailComposition';
 import { AUDIOBOOK_THEMES, AUDIOBOOK_GRADIENT_PRESETS, AudiobookThemeId } from '../remotion/audiobook/types';
+import { DhammaStudioView } from './DhammaStudioView';
 import {
+  Flower2,
+  BookOpen,
+  Circle,
+  Square,
   Sparkles,
   Headphones,
   Music,
@@ -63,13 +68,13 @@ export interface CustomBackgroundPreset {
 }
 
 export const COVER_ART_STYLE_OPTIONS = [
-  { id: 'anime', label: '🌸 Anime Style', desc: 'ဂျပန် Anime / Manga ကာဗာ' },
-  { id: '2d-sketch', label: '✏️ 2D Sketch', desc: 'ခဲတံ/မင်ရေး ပုံကြမ်း ပန်းချီ' },
-  { id: '3d-animation', label: '🎬 3D Animation', desc: 'Pixar / Disney 3D ကာတွန်း' },
-  { id: 'funny-art', label: '😂 Funny Art Style', desc: 'ဟာသစာအုပ်များအတွက် Caricature' },
-  { id: 'horror', label: '👻 Horror Style', desc: 'သည်းထိတ်ရင်ဖို / Dark Gothic' },
-  { id: 'realistic', label: '📸 Realistic', desc: 'အစစ်အမှန် ဓာတ်ပုံဆန်ဆန် Photoreal' },
-  { id: 'auto', label: '📖 Auto Detect', desc: 'အသံဖိုင်နှင့် ခေါင်းစဉ်အလိုက် AI မှ ရွေးမည်' },
+  { id: 'anime', label: 'Anime Style', desc: 'Japanese Anime / Manga Cover' },
+  { id: '2d-sketch', label: '2D Sketch', desc: 'Pencil & Ink Hand-Drawn Sketch' },
+  { id: '3d-animation', label: '3D Animation', desc: 'Pixar / Disney 3D Character Art' },
+  { id: 'funny-art', label: 'Caricature Art', desc: 'Expressive Humorous Comic Art' },
+  { id: 'horror', label: 'Dark Gothic', desc: 'Horror, Mystery & Dark Fantasy' },
+  { id: 'realistic', label: 'Photorealistic', desc: 'Cinematic High-Detail Realism' },
+  { id: 'auto', label: 'Auto Detect', desc: 'AI chooses from title & audio context' },
 ];
 
 const AUDIOBOOK_SETTINGS_KEY = 'equiz_audiobook_studio_settings_v3';
@@ -124,11 +129,14 @@ const getInitialSettings = (): SavedAudiobookSettings => {
 export const AudiobookStudioView: React.FC<AudiobookStudioViewProps> = ({ onBackToHome }) => {
   const initialSettings = useMemo(() => getInitialSettings(), []);
 
+  // Studio Tab Switcher State: 'audiobook' | 'dhamma'
+  const [activeStudioTab, setActiveStudioTab] = useState<'audiobook' | 'dhamma'>('audiobook');
+
   // 1. Typography states (restored from auto-saved localStorage)
-  const [headerTitle, setHeaderTitle] = useState<string>(initialSettings.headerTitle ?? 'သူ့ကိုမှ ချစ်မိသူ');
-  const [subheader, setSubheader] = useState<string>(initialSettings.subheader ?? 'မြန်မာ့လူမှုဘဝ ဝတ္ထုရှည်ကြီး');
-  const [authorName, setAuthorName] = useState<string>(initialSettings.authorName ?? 'ဒေါ်ခင်ဆွေဦး');
-  const [episodeText, setEpisodeText] = useState<string>(initialSettings.episodeText ?? 'အစအဆုံး');
+  const [headerTitle, setHeaderTitle] = useState<string>(initialSettings.headerTitle ?? 'The Silent Melody');
+  const [subheader, setSubheader] = useState<string>(initialSettings.subheader ?? 'A Compelling Audio Masterpiece');
+  const [authorName, setAuthorName] = useState<string>(initialSettings.authorName ?? 'Daw Khin Swe Oo');
+  const [episodeText, setEpisodeText] = useState<string>(initialSettings.episodeText ?? 'Complete Edition');
 
   // Resolution state (1080p Full HD vs 2K QHD 1440p)
   const [resolution, setResolution] = useState<'1080p' | '2k'>(initialSettings.resolution ?? '1080p');
@@ -285,7 +293,7 @@ interface AudiobookQueueItem {
   const [queueToast, setQueueToast] = useState<string | null>(null);
   const [isUploadingArtwork, setIsUploadingArtwork] = useState<boolean>(false);
 
-  // Section Accordion Drawer States (လိုမှဖွင့်ရန် vertical scroll သက်သာစေရန်)
+  // Section Accordion Drawer States (Collapsible drawers to optimize vertical space)
   const [expandedSections, setExpandedSections] = useState<{
     audio: boolean;
     artwork: boolean;
@@ -448,7 +456,7 @@ interface AudiobookQueueItem {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setAudioError(data.error || 'အသံဖိုင် စစ်ဆေး၍ မရပါ (File not found or invalid format)');
+        setAudioError(data.error || 'Audio file could not be verified (file not found or invalid format)');
         return;
       }
       setAudioDurationSec(data.durationSec);
@@ -597,7 +605,7 @@ interface AudiobookQueueItem {
         }
         setBgVideoUrl(data.videoUrl);
         setBgVideoPathInput(data.videoUrl);
-        setStockVideoSuccess(`ဗီဒီယိုဖိုင်အား (၁၀ စက္ကန့် အရှေ့ + ၁၀ စက္ကန့် Reverse = ၂၀ စက္ကန့် Seamless Ping-Pong Loop) အဖြစ် ပြောင်းလဲပြီး Preset အဖြစ် သိမ်းဆည်းလိုက်ပါပြီ!`);
+        setStockVideoSuccess('Video processed into a 20s seamless ping-pong loop and saved as preset!');
       }
     } catch (err: any) {
       console.warn('Video upload ping-pong conversion failed, keeping preview:', err);
@@ -709,7 +717,7 @@ interface AudiobookQueueItem {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Video download မအောင်မြင်ပါ');
+        throw new Error(data.error || 'Video download failed');
       }
       if (data.presets && Array.isArray(data.presets)) {
         setCustomBgPresets(data.presets);
@@ -717,7 +725,7 @@ interface AudiobookQueueItem {
       setBgVideoUrl(data.videoUrl);
       setBgVideoPathInput(data.videoUrl);
       setSelectedThemeId('custom-video');
-      setStockVideoSuccess(`ဒေါင်းလုဒ် အောင်မြင်ပါသည် (${data.width}x${data.height}, ${data.durationSec}s)! Preset အဖြစ် အလိုအလျောက် သိမ်းဆည်းပြီး Loop Background သို့ တိုက်ရိုက် ထည့်သွင်းပြီးပါပြီ။`);
+      setStockVideoSuccess(`Download complete (${data.width}x${data.height}, ${data.durationSec}s). Saved as preset and applied as active motion loop!`);
     } catch (err: any) {
       setStockVideoError(err.message || 'Video download failed');
     } finally {
@@ -760,9 +768,9 @@ interface AudiobookQueueItem {
       setAudioUrl(data.streamUrl);
 
       if (data.fromCache) {
-        setDownloadSuccessMsg(`⚡ ယခင်ဒေါင်းလုဒ်လုပ်ထားသော Cache ဖိုင်ကို တိုက်ရိုက်ရယူပြီးပါပြီ (ထပ်ဒေါင်းစရာမလိုပါ): ${data.title} (${data.formattedDuration})`);
+        setDownloadSuccessMsg(`Using cached download: ${data.title} (${data.formattedDuration})`);
       } else {
-        setDownloadSuccessMsg(`ဒေါင်းလုဒ် အောင်မြင်ပါသည်: ${data.title} (${data.formattedDuration})`);
+        setDownloadSuccessMsg(`Download complete: ${data.title} (${data.formattedDuration})`);
       }
 
       // Keep user's manual title intact (do not auto-overwrite headerTitle with YouTube title)
@@ -781,13 +789,13 @@ interface AudiobookQueueItem {
     const effectiveKey = (geminiApiKey || '').trim();
     if (!effectiveKey || effectiveKey.length < 8) {
       setShowApiKeyInput(true);
-      setAnimeCoverError('အသံဖိုင် ၁၅ မိနစ်စာကို Gemini AI ဖြင့် အမှန်တကယ် နားထောင်နိုင်ရန် Gemini API Key ထည့်သွင်းပေးပါခင်ဗျာ။');
+      setAnimeCoverError('Please provide a Gemini API Key to enable AI audio analysis.');
       return;
     }
 
     setIsGeneratingAnimeCover(true);
     setAnimeCoverError(null);
-    setAnimeGenStep('🎵 အသံဖိုင် ၁၅ မိနစ်စာ (15m Sample) ကို FFmpeg ဖြင့် ထုတ်ယူနေပါသည်...');
+    setAnimeGenStep('Extracting 15m audio sample with FFmpeg...');
 
     try {
       const res = await fetch('/api/audiobook/generate-anime-artwork', {
@@ -845,12 +853,12 @@ interface AudiobookQueueItem {
   };
 
   const handleResetDefaults = () => {
-    if (!window.confirm('Default template တန်ဖိုးများအတိုင်း ပြန်လည်ထားရှိမည်လား?')) return;
+    if (!window.confirm('Reset all values to default template?')) return;
     localStorage.removeItem(AUDIOBOOK_SETTINGS_KEY);
-    setHeaderTitle('သူ့ကိုမှ ချစ်မိသူ');
-    setSubheader('မြန်မာ့လူမှုဘဝ ဝတ္ထုရှည်ကြီး');
-    setAuthorName('ဒေါ်ခင်ဆွေဦး');
-    setEpisodeText('အစအဆုံး');
+    setHeaderTitle('The Silent Melody');
+    setSubheader('A Compelling Audio Masterpiece');
+    setAuthorName('Daw Khin Swe Oo');
+    setEpisodeText('Complete Edition');
     setHeaderFontSize(72);
     setSubheaderFontSize(32);
     setAuthorFontSize(24);
@@ -918,11 +926,11 @@ interface AudiobookQueueItem {
   // Queue or Start Fast Render (Sequential FIFO background queue)
   const handleQueueOrStartRender = async () => {
     if (!headerTitle.trim()) {
-      setRenderError('စာအုပ်ခေါင်းစဉ် ထည့်သွင်းပေးပါရန် လိုအပ်ပါသည်။');
+      setRenderError('Please provide a Book Title before rendering.');
       return;
     }
     if (!audioPathInput && !audioUrl) {
-      setRenderError('Audio ဖိုင် ထည့်သွင်းပေးပါရန် လိုအပ်ပါသည်။');
+      setRenderError('Please select an Audio Source before rendering.');
       return;
     }
 
@@ -966,14 +974,14 @@ interface AudiobookQueueItem {
 
       const resJson = await response.json().catch(() => ({}));
       if (!response.ok || !resJson.success) {
-        throw new Error(resJson.error || 'Queue စတင်ရန် မအောင်မြင်ပါ');
+        throw new Error(resJson.error || 'Failed to start queue job');
       }
 
       const queuePos = resJson.queuePosition;
       setQueueToast(
         queuePos > 1 || activeJob
-          ? `🎉 "${headerTitle}" ကို Queue #${queuePos} အဖြစ် ထည့်သွင်းပြီးပါပြီ! နောက်ထပ် စာအုပ်များကို ဆက်လက်ပြင်ဆင် ထည့်သွင်းနိုင်ပါသည်။`
-          : `⚡ "${headerTitle}" အား Export စတင်နေပါပြီ...`
+          ? `Added "${headerTitle}" to Queue #${queuePos}. You can prepare more audiobooks.`
+          : `Starting export for "${headerTitle}"...`
       );
       setTimeout(() => setQueueToast(null), 6000);
       fetchQueueStatus();
@@ -1057,7 +1065,7 @@ interface AudiobookQueueItem {
     setIsGeneratingThumbnail(true);
     setThumbnailToast({
       status: 'generating',
-      message: 'YouTube Thumbnail ပုံရိပ် (1080p Full HD PNG) ထုတ်လုပ်နေပါသည်...',
+      message: 'Generating 1080p Full HD YouTube Thumbnail PNG...',
     });
     try {
       const payload = {
@@ -1093,7 +1101,7 @@ interface AudiobookQueueItem {
       }
       setThumbnailToast({
         status: 'success',
-        message: 'YouTube Thumbnail (1080p Full HD) အောင်မြင်စွာ ထုတ်လုပ်ပြီးပါပြီ!',
+        message: 'YouTube Thumbnail (1080p Full HD) generated successfully!',
         filePath: data.localFilePath,
         fileName: data.filename || data.fileName,
         downloadUrl: data.downloadUrl,
@@ -1101,49 +1109,125 @@ interface AudiobookQueueItem {
     } catch (err: any) {
       setThumbnailToast({
         status: 'error',
-        message: err.message || 'Thumbnail ထုတ်လုပ်ရာတွင် အမှားဖြစ်ပေါ်ပါသည်',
+        message: err.message || 'Error occurred while generating thumbnail',
       });
     } finally {
       setIsGeneratingThumbnail(false);
     }
   };
 
+  // If Dhamma Studio tab is selected, render Dhamma Studio Suite with top switcher
+  if (activeStudioTab === 'dhamma') {
+    return (
+      <div
+        className="max-w-[1720px] mx-auto py-6 px-4 sm:px-6 space-y-6 animate-fade-in font-pann-yeat"
+        style={{ fontFamily: "'PannYeat', 'Padauk', sans-serif" }}
+      >
+        {/* Top Header Bar with Studio Switcher */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-3xl bg-slate-900/90 border border-amber-500/30 shadow-xl backdrop-blur-md">
+          <div className="flex flex-wrap items-center gap-4">
+            {onBackToHome && (
+              <button
+                onClick={onBackToHome}
+                className="p-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                title="Back to Landing Page"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
+
+            {/* Studio Switcher Tabs */}
+            <div className="flex items-center p-1 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-inner">
+              <button
+                type="button"
+                onClick={() => setActiveStudioTab('audiobook')}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all"
+              >
+                <Headphones className="w-4 h-4 text-indigo-400" />
+                <span>Audiobook Studio</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveStudioTab('dhamma')}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-700 text-slate-950 font-black shadow-lg shadow-amber-500/30 transition-all"
+              >
+                <Flower2 className="w-4 h-4 text-slate-950" />
+                <span>Dhamma Studio</span>
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-950/20 text-slate-950 font-black">
+                  New
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <DhammaStudioView onSwitchToAudiobook={() => setActiveStudioTab('audiobook')} />
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-[1720px] mx-auto py-6 px-4 sm:px-6 space-y-6 animate-fade-in">
+    <div
+      className="max-w-[1720px] mx-auto py-6 px-4 sm:px-6 space-y-6 animate-fade-in font-pann-yeat"
+      style={{ fontFamily: "'PannYeat', 'Padauk', sans-serif" }}
+    >
       {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-3xl bg-slate-900/90 border border-indigo-500/30 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onBackToHome}
-            className="p-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-            title="Back to Landing Page"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-5 rounded-3xl bg-slate-900/90 border border-indigo-500/30 shadow-xl backdrop-blur-md">
+        <div className="flex flex-wrap items-center gap-4">
+          {onBackToHome && (
+            <button
+              onClick={onBackToHome}
+              className="p-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+              title="Back to Landing Page"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
+
+          {/* Studio Switcher Tabs */}
+          <div className="flex items-center p-1 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-inner">
+            <button
+              type="button"
+              onClick={() => setActiveStudioTab('audiobook')}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/30 transition-all"
+            >
+              <Headphones className="w-4 h-4 text-amber-300" />
+              <span>Audiobook Studio</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveStudioTab('dhamma')}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-amber-300 transition-all"
+            >
+              <Flower2 className="w-4 h-4 text-amber-400" />
+              <span>Dhamma Studio</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 font-semibold">
+                New
+              </span>
+            </button>
+          </div>
+
           <div>
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
-                <Headphones className="w-5 h-5" />
-              </div>
               <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-                Audio Book Studio
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
-                  1080p Full HD
+                Audiobook Studio Pro
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">
+                  {resolution.toUpperCase()} FHD
                 </span>
               </h1>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Remotion Studio + Forward Stream Loop (Reverse မသုံးဘဲ စဉ်ဆက်မပြတ် ချောမွေ့စွာ ထုတ်လုပ်စနစ်)
+              Continuous forward stream with seamless 20s ambient background loop
             </p>
           </div>
         </div>
 
         {/* Action Buttons & Auto-Save Status */}
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+        <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end">
           {lastSavedTime && (
             <span
               className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 font-medium"
-              title="ရွေးချယ်ထားသော data များကို အလိုအလျောက် သိမ်းဆည်းထားပြီး ဖြစ်ပါသည်"
+              title="Settings auto-saved to local storage"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               Auto-saved ({lastSavedTime})
@@ -1153,7 +1237,7 @@ interface AudiobookQueueItem {
           <button
             onClick={handleResetDefaults}
             className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-xs"
-            title="Default template တန်ဖိုးများအတိုင်း ပြန်လည်ထားရှိရန်"
+            title="Reset all settings to default template"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden md:inline">Reset</span>
@@ -1193,12 +1277,12 @@ interface AudiobookQueueItem {
             {activeJob ? (
               <>
                 <Plus className="w-4 h-4" />
-                <span>➕ Queue သို့ နောက်တစ်ခု ထပ်တန်းစီမည် ({queueJobs.length + 1})</span>
+                <span>Add to Queue ({queueJobs.length + 1})</span>
               </>
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                <span>⚡ Fast Export {resolution.toUpperCase()} MP4</span>
+                <span>Start Fast Export ({resolution.toUpperCase()} MP4)</span>
               </>
             )}
           </button>
@@ -1218,7 +1302,7 @@ interface AudiobookQueueItem {
             className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-300 border border-slate-700/80 transition-all flex items-center gap-1.5 shadow-sm font-medium"
             title="Open ~/Downloads/Audiobook/ in Finder"
           >
-            <span>📁 All Audiobooks</span>
+            <FolderOpen className="w-3.5 h-3.5 text-indigo-400" /><span>All Audiobooks</span>
           </button>
           <button
             type="button"
@@ -1226,7 +1310,7 @@ interface AudiobookQueueItem {
             className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-600 hover:text-white text-rose-300 border border-rose-500/30 transition-all flex items-center gap-1.5 shadow-sm font-medium"
             title="Open ~/Downloads/Audiobook/Thumbnails/ in Finder"
           >
-            <span>🖼️ Thumbnails</span>
+            <ImageIcon className="w-3.5 h-3.5 text-rose-400" /><span>Thumbnails</span>
           </button>
           <button
             type="button"
@@ -1234,7 +1318,7 @@ interface AudiobookQueueItem {
             className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-red-600 hover:text-white text-red-300 border border-red-500/30 transition-all flex items-center gap-1.5 shadow-sm font-medium"
             title="Open ~/Downloads/Audiobook/YouTube Downloads/ in Finder"
           >
-            <span>🎵 YouTube Audio</span>
+            <Music className="w-3.5 h-3.5 text-red-400" /><span>YouTube Audio</span>
           </button>
           <button
             type="button"
@@ -1242,7 +1326,7 @@ interface AudiobookQueueItem {
             className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-purple-600 hover:text-white text-purple-300 border border-purple-500/30 transition-all flex items-center gap-1.5 shadow-sm font-medium"
             title="Open ~/Downloads/Audiobook/AI Generations/ in Finder"
           >
-            <span>🎨 AI Covers</span>
+            <Sparkles className="w-3.5 h-3.5 text-purple-400" /><span>AI Covers</span>
           </button>
           <button
             type="button"
@@ -1250,14 +1334,14 @@ interface AudiobookQueueItem {
             className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-600 hover:text-white text-amber-300 border border-amber-500/30 transition-all flex items-center gap-1.5 shadow-sm font-medium"
             title="Open ~/Downloads/Audiobook/BG Videos/ (Permanent) in Finder"
           >
-            <span>🎬 BG Videos</span>
+            <Film className="w-3.5 h-3.5 text-amber-400" /><span>BG Videos</span>
           </button>
         </div>
 
         <div className="flex items-center gap-2">
           <span
             className="text-[11px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-xl flex items-center gap-1.5 font-medium"
-            title="၄၈ နာရီကျော်သော result file များကို အလိုအလျောက် သန့်ရှင်းရေး ပြုလုပ်ပါသည် (BG Videos မပါဝင်ပါ)"
+            title="Auto-cleans temporary render files older than 48 hours (excluding BG Videos)"
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
             <span>48h Auto-Cleanup Active</span>
@@ -1346,7 +1430,7 @@ interface AudiobookQueueItem {
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-amber-300 block truncate">
-                    အသံဖိုင် ရွေးချယ်ရန် (Audio Source)
+                    1. Audio Source & Track
                   </span>
                   {audioDurationSec > 0 && (
                     <span className="text-[10px] font-mono text-emerald-400 font-bold">
@@ -1409,7 +1493,7 @@ interface AudiobookQueueItem {
                     </div>
                     <div className="min-w-0">
                       <div className="text-xs font-bold text-white flex items-center gap-2 truncate">
-                        <span>Desktop တွင် တွေ့ရှိသော Voice Memo:</span>
+                        <span>Voice Memo on Desktop:</span>
                         <span className="text-[10px] text-emerald-300 font-mono font-bold bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">32:25</span>
                       </div>
                       <p className="text-[11px] text-slate-300 truncate font-mono">
@@ -1438,7 +1522,7 @@ interface AudiobookQueueItem {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
                       <Mic className="w-4 h-4 text-amber-400" />
-                      <span>Apple Voice Memos မှ အသံသွင်းဖိုင် ထည့်သွင်းနည်း</span>
+                      <span>How to import Apple Voice Memos</span>
                     </div>
                     <button
                       type="button"
@@ -1446,21 +1530,21 @@ interface AudiobookQueueItem {
                       className="text-[11px] text-amber-400 hover:text-amber-200 underline font-semibold flex items-center gap-1"
                     >
                       <HelpCircle className="w-3.5 h-3.5" />
-                      {showVoiceMemoHelp ? 'ပိတ်ရန်' : 'ရှာနည်းကြည့်ရန်'}
+                      {showVoiceMemoHelp ? 'Hide Help' : 'Show Help'}
                     </button>
                   </div>
 
                   {showVoiceMemoHelp && (
                     <div className="pt-2 text-[11px] text-slate-300 space-y-2 border-t border-amber-500/20 leading-relaxed">
                       <p>
-                        <strong className="text-amber-300 font-bold">နည်းလမ်း ၁ (အလွယ်ဆုံး):</strong> Mac ၏{' '}
-                        <span className="text-white font-bold underline">Voice Memos App</span> ထဲမှ အသံသွင်းထားသော ဖိုင်ကို Mouse ဖြင့် ဖိဆွဲပြီး အောက်ပါ Drop Zone ထဲသို့ တိုက်ရိုက် Drag & Drop ဆွဲချလိုက်ပါ!
+                        <strong className="text-amber-300 font-bold">Method 1 (Easiest):</strong> Drag & drop recordings directly from the{' '}
+                        <span className="text-white font-bold underline">Apple Voice Memos App</span> into the drop box below!
                       </p>
                       <p>
-                        <strong className="text-amber-300 font-bold">နည်းလမ်း ၂:</strong> Voice Memos App ထဲမှ "Share (မျှဝေရန်)" ခလုတ် &gt; "Save to Files" နှိပ်ပြီး Desktop (သို့) Downloads ထဲသို့ save ကာ Browse လုပ်ပါ။
+                        <strong className="text-amber-300 font-bold">Method 2:</strong> In Voice Memos, choose "Share" &gt; "Save to Files", save to Desktop or Downloads, then click Browse.
                       </p>
                       <div className="pt-1">
-                        <span className="text-slate-400">နည်းလမ်း ၃ (Finder ထဲ တိုက်ရိုက်သွားရှာရန် Path):</span>
+                        <span className="text-slate-400">Method 3 (Direct Recordings Folder Path):</span>
                         <div className="flex items-center gap-2 mt-1">
                           <input
                             readOnly
@@ -1476,8 +1560,9 @@ interface AudiobookQueueItem {
                             {copiedVoicePath ? 'Copied!' : 'Copy Path'}
                           </button>
                         </div>
-                        <span className="text-[10px] text-slate-400">
-                          💡 Finder ဖွင့်ပြီး <code className="text-amber-300 font-mono font-bold">Shift + Cmd + G</code> နှိပ်ကာ အထက်ပါ path ကို paste လုပ်ပြီး ချက်ချင်းဖွင့်နိုင်ပါသည်။
+                        <span className="text-[10px] text-slate-400 flex items-center gap-1 mt-1">
+                          <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
+                          <span>Tip: In Finder, press <code className="text-amber-300 font-mono font-bold">Shift + Cmd + G</code>, paste this path, and press Enter to open recordings.</span>
                         </span>
                       </div>
                     </div>
@@ -1516,11 +1601,11 @@ interface AudiobookQueueItem {
                 {/* Manual Path or Selected File Display */}
                 <div className="space-y-1.5">
                   <label className="text-[11px] text-slate-400 font-semibold flex items-center justify-between">
-                    <span>Mac File Location Path သို့မဟုတ် Drag & Drop File:</span>
+                    <span>Local File Location Path or Drag & Drop File:</span>
                     {isInspectingAudio && (
                       <span className="text-[11px] text-amber-400 font-normal flex items-center gap-1">
                         <Loader2 className="w-3 h-3 animate-spin" />
-                        စစ်ဆေးနေပါသည်...
+                        Inspecting file...
                       </span>
                     )}
                   </label>
@@ -1547,7 +1632,7 @@ interface AudiobookQueueItem {
                       {isInspectingAudio ? (
                         <>
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>စစ်ဆေးနေဆဲ...</span>
+                          <span>Inspecting...</span>
                         </>
                       ) : (
                         <>
@@ -1567,7 +1652,7 @@ interface AudiobookQueueItem {
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-red-300 flex items-center gap-1.5">
                     <Youtube className="w-4 h-4 text-red-400" />
-                    YouTube (သို့မဟုတ်) Direct Audio Link ထည့်သွင်းရန်
+                    Enter YouTube or Direct Audio Link
                   </span>
                   <span className="text-[10px] text-red-400 font-semibold bg-red-500/10 px-2 py-0.5 rounded-lg border border-red-500/20">
                     Instant Audio Download
@@ -1586,7 +1671,7 @@ interface AudiobookQueueItem {
                           handleDownloadWebAudio();
                         }
                       }}
-                      placeholder="https://www.youtube.com/watch?v=... သို့မဟုတ် https://youtu.be/..."
+                      placeholder="https://www.youtube.com/watch?v=... or direct audio URL"
                       className="flex-1 px-3 py-2 text-xs bg-slate-950 border border-red-500/30 rounded-xl text-slate-200 font-mono focus:outline-none focus:border-red-400"
                     />
                     <button
@@ -1598,7 +1683,7 @@ interface AudiobookQueueItem {
                       {isDownloadingWebAudio ? (
                         <>
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>ဒေါင်းလုဒ်ဆွဲနေသည်...</span>
+                          <span>Downloading audio...</span>
                         </>
                       ) : (
                         <>
@@ -1608,8 +1693,9 @@ interface AudiobookQueueItem {
                       )}
                     </button>
                   </div>
-                  <p className="text-[10px] text-slate-400 leading-relaxed">
-                    💡 YouTube link ထည့်ပါက အသံကို သီးသန့် download ပြုလုပ်ပေးပြီး ကြာချိန်နှင့် စာစဉ်အမည်ကို အလိုအလျောက် စစ်ဆေးပြီး အသုံးပြုပေးပါမည်။
+                  <p className="text-[10px] text-slate-400 leading-relaxed flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-red-400 shrink-0" />
+                    <span>Paste a YouTube link to extract audio track, title, and duration automatically.</span>
                   </p>
                 </div>
 
@@ -1669,10 +1755,10 @@ interface AudiobookQueueItem {
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-pink-300 block truncate">
-                    အဓိက ဇာတ်ကောင် / စာအုပ်ကာဗာ ပုံ (Artwork)
+                    2. Book Cover Artwork & Frame
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    ပုံ ၁ ပုံ သီးသန့် အသုံးပြုမည်
+                    Featured single image slot
                   </span>
                 </div>
               </div>
@@ -1694,23 +1780,27 @@ interface AudiobookQueueItem {
             {/* Shape Selector */}
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: 'book-cover', label: '📖 Book (3:4)' },
-                { id: 'circle', label: '⚪ Circle Avatar' },
-                { id: 'square', label: '⬛ Square (1:1)' },
-              ].map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setArtworkShape(s.id as any)}
-                  className={`py-2 px-2 rounded-xl text-xs font-bold border transition-all truncate text-center ${
-                    artworkShape === s.id
-                      ? 'bg-pink-600 text-white border-pink-400 shadow-md shadow-pink-500/20'
-                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
-                  }`}
-                >
-                  {s.label}
-                </button>
-              ))}
+                { id: 'book-cover', label: 'Book (3:4)', icon: BookOpen },
+                { id: 'circle', label: 'Circle Avatar', icon: Circle },
+                { id: 'square', label: 'Square (1:1)', icon: Square },
+              ].map((s) => {
+                const ShapeIcon = s.icon;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setArtworkShape(s.id as any)}
+                    className={`py-2 px-2 rounded-xl text-xs font-bold border transition-all truncate text-center flex items-center justify-center gap-1.5 ${
+                      artworkShape === s.id
+                        ? 'bg-pink-600 text-white border-pink-400 shadow-md shadow-pink-500/20'
+                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+                    }`}
+                  >
+                    <ShapeIcon className="w-3.5 h-3.5" />
+                    <span>{s.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Artwork Card Width Slider */}
@@ -1718,7 +1808,7 @@ interface AudiobookQueueItem {
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-300 font-semibold flex items-center gap-1.5">
                   <Sliders className="w-3.5 h-3.5 text-pink-400" />
-                  ကာဗာပုံ / ဇာတ်ကောင် အရွယ်အစား (Artwork Width):
+                  Artwork Width / Scale:
                 </span>
                 <span className="font-mono text-pink-400 font-bold">{artworkWidth}px</span>
               </div>
@@ -1732,9 +1822,9 @@ interface AudiobookQueueItem {
                 className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-pink-500"
               />
               <div className="flex justify-between text-[10px] text-slate-400">
-                <span>280px (ကျစ်လျစ်)</span>
-                <span>420px (Default)</span>
-                <span>620px (အလွန်ကြီး)</span>
+                <span>280px (Compact)</span>
+                <span>420px (Standard)</span>
+                <span>620px (Large)</span>
               </div>
             </div>
 
@@ -1749,7 +1839,7 @@ interface AudiobookQueueItem {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] font-mono font-bold text-pink-300 bg-pink-500/15 px-2 py-0.5 rounded-lg border border-pink-500/30">
-                    ⚡ eQuiz Model: {activeImageModel}
+                    Model: {activeImageModel}
                   </span>
                 </div>
               </div>
@@ -1762,11 +1852,11 @@ interface AudiobookQueueItem {
                     <span className="text-slate-300">Gemini API Key:</span>
                     {geminiApiKey && geminiApiKey.length > 8 ? (
                       <span className="text-emerald-400 font-bold flex items-center gap-1">
-                        <Check className="w-3 h-3" /> ချိတ်ဆက်ပြီး (15m Listen Active)
+                        <Check className="w-3 h-3" /> Connected (15m Audio Analysis)
                       </span>
                     ) : (
                       <span className="text-rose-400 font-bold flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> မရှိသေးပါ
+                        <AlertCircle className="w-3 h-3" /> Not Configured
                       </span>
                     )}
                   </div>
@@ -1775,7 +1865,7 @@ interface AudiobookQueueItem {
                     onClick={() => setShowApiKeyInput(!showApiKeyInput)}
                     className="text-[10px] text-amber-400 hover:text-amber-200 underline font-semibold"
                   >
-                    {showApiKeyInput ? 'ပိတ်မည်' : geminiApiKey ? 'Key ပြင်မည်' : 'Key ထည့်မည်'}
+                    {showApiKeyInput ? 'Close' : geminiApiKey ? 'Change Key' : 'Add Key'}
                   </button>
                 </div>
 
@@ -1786,7 +1876,7 @@ interface AudiobookQueueItem {
                         type="password"
                         value={apiKeyInputValue}
                         onChange={(e) => setApiKeyInputValue(e.target.value)}
-                        placeholder="AIzaSy... (Gemini API Key ထည့်ပါ)"
+                        placeholder="Enter Gemini API Key (AIzaSy...)"
                         className="flex-1 px-2.5 py-1 text-xs bg-slate-900 border border-amber-500/40 rounded-lg text-slate-200 font-mono focus:outline-none focus:border-amber-400"
                       />
                       <button
@@ -1797,21 +1887,22 @@ interface AudiobookQueueItem {
                         Save
                       </button>
                     </div>
-                    <p className="text-[10px] text-slate-400">
-                      💡 အသံဖိုင် ၁၅ မိနစ်စာကို Gemini ဖြင့် အမှန်တကယ် နားထောင်၍ ဇာတ်ကောင်နှင့် အကြောင်းအရာကို ဆန်းစစ်နိုင်ရန် Gemini API Key လိုအပ်ပါသည်။
+                    <p className="text-[10px] text-slate-400 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
+                      <span>A Gemini API Key enables AI to listen to a 15-minute sample to craft authentic book covers.</span>
                     </p>
                   </div>
                 )}
               </div>
 
               <p className="text-[11px] text-slate-300 leading-relaxed">
-                အသံဖိုင် ၁၅ မိနစ်စာ (15m Sample) ကို Gemini AI ဖြင့် အမှန်တကယ် နားထောင်၍ ဇာတ်ကောင်၊ အကြောင်းအရာနှင့် သမိုင်း/ခေတ်ကာလကို တိကျစွာ ဆန်းစစ်ကာ စာအုပ်ကာဗာပုံ ရေးဆွဲပေးပါမည်။
+                Gemini AI analyzes a 15-minute audio sample to accurately detect characters, era, setting, and story mood for authentic artwork.
               </p>
 
               {/* Cover Art Style Selector (Collapsible Dropdown Menu) */}
               <div className="space-y-1.5 relative">
                 <label className="text-[10px] text-slate-400 font-semibold flex items-center justify-between">
-                  <span>ကာဗာ အနုပညာစတိုင် (Cover Art Style):</span>
+                  <span>Cover Artwork Style:</span>
                   <span className="text-[10px] font-mono text-indigo-300 font-bold">
                     {COVER_ART_STYLE_OPTIONS.find(o => o.id === coverArtStyle)?.label || coverArtStyle}
                   </span>
@@ -1870,13 +1961,13 @@ interface AudiobookQueueItem {
               {/* Optional Custom Theme/Keyword Input */}
               <div className="space-y-1">
                 <label className="text-[10px] text-slate-400 font-medium">
-                  စိတ်ကြိုက် ဇာတ်ကောင် / သမိုင်းဝင်ပုဂ္ဂိုလ် အသေးစိတ် (Optional Custom Prompt):
+                  Custom Character, Mood or Style Details (Optional):
                 </label>
                 <input
                   type="text"
                   value={animePromptInput}
                   onChange={(e) => setAnimePromptInput(e.target.value)}
-                  placeholder="ဥပမာ - ဗိုလ်ချုပ်မှူးကြီး သန်းရွှေ၊ စစ်ယူနီဖောင်း၊ တရားတော်၊ ကောင်မလေး စသည်"
+                  placeholder="e.g. vintage character, military uniform, peaceful monastery, rain atmosphere..."
                   className="w-full px-3 py-1.5 text-xs bg-slate-950/90 border border-indigo-500/30 rounded-xl text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-400"
                 />
               </div>
@@ -1891,12 +1982,12 @@ interface AudiobookQueueItem {
                 {isGeneratingAnimeCover ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin text-white" />
-                    <span>{animeGenStep || 'AI ဖြင့် ကာဗာပုံ ရေးဆွဲနေပါသည်...'}</span>
+                    <span>{animeGenStep || 'Generating AI Cover Art...'}</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 text-amber-300" />
-                    <span>အသံဖိုင် ၁၅ မိနစ်စာမှ AI ကာဗာပုံ ထုတ်မည် (Generate Cover)</span>
+                    <span>Generate AI Cover Art from Audio</span>
                   </>
                 )}
               </button>
@@ -1942,7 +2033,7 @@ interface AudiobookQueueItem {
                       className="py-1.5 px-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold rounded-lg flex items-center justify-center gap-1 transition-all"
                     >
                       <Check className="w-3.5 h-3.5" />
-                      ကာဗာအဖြစ် သုံးမည်
+                      Apply as Cover
                     </button>
                     <button
                       type="button"
@@ -1951,7 +2042,7 @@ interface AudiobookQueueItem {
                       className="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1 border border-slate-700 transition-all"
                     >
                       <RefreshCw className="w-3 h-3 text-pink-400" />
-                      တဖန် ပြန်ထုတ်မည်
+                      Regenerate
                     </button>
                   </div>
                 </div>
@@ -1962,7 +2053,7 @@ interface AudiobookQueueItem {
             <div className="pt-2 border-t border-slate-800/80 space-y-2.5">
               <span className="text-[11px] text-slate-400 font-semibold flex items-center gap-1">
                 <FolderOpen className="w-3.5 h-3.5 text-slate-400" />
-                သို့မဟုတ် စက်ထဲမှ ပုံတင်ရန် (Manual Upload / URL):
+                Or Upload from Computer / Direct Image URL:
               </span>
 
               {/* Image input buttons */}
@@ -2012,7 +2103,7 @@ interface AudiobookQueueItem {
                     setArtworkUrl(e.target.value);
                   }}
                   onKeyDown={(e) => e.key === 'Enter' && handleApplyArtworkPath()}
-                  placeholder="/path/to/cover.jpg သို့မဟုတ် URL"
+                  placeholder="/path/to/cover.jpg or https://..."
                   className="w-full px-3 py-1.5 text-xs bg-slate-950 border border-slate-800 rounded-xl text-slate-300 font-mono focus:outline-none focus:border-pink-500"
                 />
                 {artworkUrl && (
@@ -2052,10 +2143,10 @@ interface AudiobookQueueItem {
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-indigo-300 block truncate">
-                    စာအုပ်စာသား အချက်အလက်နှင့် ဖောင့်များ (Typography)
+                    3. Book Details & Typography
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    ခေါင်းစဉ်၊ စာရေးသူ၊ အရောင်နှင့် ဖောင့်ဆိုက်များ
+                    Title, Author, Font Sizes & Colors
                   </span>
                 </div>
               </div>
@@ -2076,14 +2167,14 @@ interface AudiobookQueueItem {
                 {/* Header Title Input (Supports 1 or 2 lines) */}
                 <div className="space-y-1.5">
                   <label className="text-xs text-slate-300 font-bold flex items-center justify-between">
-                    <span>စာအုပ်အမည် (Header Title - TU001_Pann Yeat Font)</span>
-                    <span className="text-[10px] text-amber-400 font-normal">Enter ခေါက်၍ Line ၂ ကြောင်း ခွဲနိုင်ပါသည်</span>
+                    <span>Book Title (Header Title)</span>
+                    <span className="text-[10px] text-amber-400 font-normal">Press Enter for multi-line title</span>
                   </label>
                   <textarea
                     rows={2}
                     value={headerTitle}
                     onChange={(e) => setHeaderTitle(e.target.value)}
-                    placeholder="ဥပမာ - သူ့ကိုမှ ချစ်မိသူ (သို့မဟုတ် Enter ခေါက်ပြီး ၂ ကြောင်းခွဲပါ)"
+                    placeholder="e.g. The Silent Melody (or press Enter for 2 lines)"
                     className="w-full px-3.5 py-2.5 text-base bg-slate-950 border border-slate-800 rounded-xl text-white font-pann-yeat focus:outline-none focus:border-indigo-500 font-bold shadow-inner resize-none leading-snug"
                   />
                 </div>
@@ -2091,7 +2182,7 @@ interface AudiobookQueueItem {
             {/* Header Font Size Slider */}
             <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-300 font-semibold">၁။ စာအုပ်အမည် စာလုံးအရွယ်အစား (Title Font Size):</span>
+                <span className="text-slate-300 font-semibold">1. Book Title Font Size:</span>
                 <span className="font-mono text-indigo-400 font-bold">{headerFontSize}px</span>
               </div>
               <input
@@ -2106,21 +2197,21 @@ interface AudiobookQueueItem {
               <div className="flex justify-between text-[10px] text-slate-400">
                 <span>36px</span>
                 <span>72px (Default)</span>
-                <span>160px (အလွန်ကြီး)</span>
+                <span>160px (Max)</span>
               </div>
             </div>
 
             {/* Subheader Input */}
             <div className="space-y-1.5">
               <label className="text-xs text-slate-300 font-bold flex items-center justify-between">
-                <span>အောက်ခေါင်းစဉ် (Subheader - စာကြောင်း ၁ မှ ၂ ကြောင်း)</span>
-                <span className="text-[10px] text-amber-400 font-normal">Font: TU001_Pann Yeat</span>
+                <span>Book Subtitle (Subheader)</span>
+                <span className="text-[10px] text-amber-400 font-normal">Font: PannYeat</span>
               </label>
               <input
                 type="text"
                 value={subheader}
                 onChange={(e) => setSubheader(e.target.value)}
-                placeholder="ဥပမာ - မြန်မာ့လူမှုဘဝ ဝတ္ထုရှည်ကြီး"
+                placeholder="e.g. A Compelling Audio Novel Masterpiece"
                 className="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-indigo-500 font-pann-yeat"
               />
             </div>
@@ -2128,7 +2219,7 @@ interface AudiobookQueueItem {
             {/* Subheader Font Size Slider */}
             <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-300 font-semibold">၂။ အောက်ခေါင်းစဉ် စာလုံးအရွယ်အစား (Subheader Size):</span>
+                <span className="text-slate-300 font-semibold">2. Subheader Font Size:</span>
                 <span className="font-mono text-indigo-400 font-bold">{subheaderFontSize}px</span>
               </div>
               <input
@@ -2143,34 +2234,34 @@ interface AudiobookQueueItem {
               <div className="flex justify-between text-[10px] text-slate-400">
                 <span>16px</span>
                 <span>32px (Default)</span>
-                <span>90px (အလွန်ကြီး)</span>
+                <span>90px (Max)</span>
               </div>
             </div>
 
-            {/* Author (စာရေးသူ) & Episode in 2 columns */}
+            {/* Author & Episode in 2 columns */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <label className="text-xs text-slate-300 font-bold">
-                  စာရေးသူ (Author Text)
+                  Author Name
                 </label>
                 <input
                   type="text"
                   value={authorName}
                   onChange={(e) => setAuthorName(e.target.value)}
-                  placeholder="ဒေါ်ခင်ဆွေဦး"
+                  placeholder="e.g. Daw Khin Swe Oo"
                   className="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-xl text-white font-pann-yeat focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs text-slate-300 font-bold">
-                  အပိုင်းအမှတ် (Episode)
+                  Episode / Part
                 </label>
                 <input
                   type="text"
                   value={episodeText}
                   onChange={(e) => setEpisodeText(e.target.value)}
-                  placeholder="အစအဆုံး / အပိုင်း ၁"
+                  placeholder="e.g. Complete Edition / Part 1"
                   className="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-xl text-white font-pann-yeat focus:outline-none focus:border-indigo-500"
                 />
               </div>
@@ -2179,7 +2270,7 @@ interface AudiobookQueueItem {
             {/* Author Font Size Slider */}
             <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-300 font-semibold">၃။ စာရေးသူ စာလုံးအရွယ်အစား (Author Size):</span>
+                <span className="text-slate-300 font-semibold">3. Author Font Size:</span>
                 <span className="font-mono text-indigo-400 font-bold">{authorFontSize}px</span>
               </div>
               <input
@@ -2194,14 +2285,14 @@ interface AudiobookQueueItem {
               <div className="flex justify-between text-[10px] text-slate-400">
                 <span>14px</span>
                 <span>24px (Default)</span>
-                <span>70px (အလွန်ကြီး)</span>
+                <span>70px (Max)</span>
               </div>
             </div>
 
             {/* Episode Tag Font Size Slider */}
             <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-300 font-semibold">၄။ အစအဆုံး / အပိုင်း စာလုံးအရွယ်အစား (Episode Badge Size):</span>
+                <span className="text-slate-300 font-semibold">4. Episode Badge Size:</span>
                 <span className="font-mono text-indigo-400 font-bold">{episodeFontSize}px</span>
               </div>
               <input
@@ -2216,7 +2307,7 @@ interface AudiobookQueueItem {
               <div className="flex justify-between text-[10px] text-slate-400">
                 <span>12px</span>
                 <span>18px (Default)</span>
-                <span>50px (အလွန်ကြီး)</span>
+                <span>50px (Max)</span>
               </div>
             </div>
 
@@ -2225,7 +2316,7 @@ interface AudiobookQueueItem {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
                   <Palette className="w-3.5 h-3.5 text-indigo-400" />
-                  စာလုံးအရောင်နှင့် Box အရောင် ရွေးချယ်မှု (Colors)
+                  Custom Text & Badge Colors
                 </span>
                 <button
                   type="button"
@@ -2239,14 +2330,14 @@ interface AudiobookQueueItem {
                   }}
                   className="text-[10px] text-indigo-400 hover:text-indigo-300 underline font-semibold"
                 >
-                  မူလ Reset
+                  Reset Colors
                 </button>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5 text-[11px]">
                 {/* Title Color */}
                 <div className="space-y-1">
-                  <span className="text-slate-400 font-medium">စာအုပ်အမည် အရောင်:</span>
+                  <span className="text-slate-400 font-medium">Title Color:</span>
                   <div className="flex items-center gap-1.5">
                     <input
                       type="color"
@@ -2266,7 +2357,7 @@ interface AudiobookQueueItem {
 
                 {/* Subheader Color */}
                 <div className="space-y-1">
-                  <span className="text-slate-400 font-medium">အောက်ခေါင်းစဉ် အရောင်:</span>
+                  <span className="text-slate-400 font-medium">Subtitle Color:</span>
                   <div className="flex items-center gap-1.5">
                     <input
                       type="color"
@@ -2280,20 +2371,20 @@ interface AudiobookQueueItem {
 
                 {/* Author Text & Box Color */}
                 <div className="space-y-1">
-                  <span className="text-slate-400 font-medium">စာရေးသူ စာလုံး / Box အရောင်:</span>
+                  <span className="text-slate-400 font-medium">Author Text / Box Color:</span>
                   <div className="flex items-center gap-1.5">
                     <input
                       type="color"
                       value={authorTextColor || '#ffffff'}
                       onChange={(e) => setAuthorTextColor(e.target.value)}
-                      title="စာသားအရောင်"
+                      title="Text Color"
                       className="w-7 h-7 rounded-lg border border-slate-700 cursor-pointer bg-transparent"
                     />
                     <input
                       type="color"
                       value={authorBgColor || '#1e293b'}
                       onChange={(e) => setAuthorBgColor(e.target.value)}
-                      title="နောက်ခံ Box အရောင်"
+                      title="Box Background Color"
                       className="w-7 h-7 rounded-lg border border-slate-700 cursor-pointer bg-transparent"
                     />
                   </div>
@@ -2301,20 +2392,20 @@ interface AudiobookQueueItem {
 
                 {/* Episode Text & Box Color */}
                 <div className="space-y-1">
-                  <span className="text-slate-400 font-medium">အပိုင်း Badge စာလုံး / Box:</span>
+                  <span className="text-slate-400 font-medium">Episode Badge Text / Box:</span>
                   <div className="flex items-center gap-1.5">
                     <input
                       type="color"
                       value={episodeTextColor || '#ffffff'}
                       onChange={(e) => setEpisodeTextColor(e.target.value)}
-                      title="စာသားအရောင်"
+                      title="Text Color"
                       className="w-7 h-7 rounded-lg border border-slate-700 cursor-pointer bg-transparent"
                     />
                     <input
                       type="color"
                       value={episodeBgColor || '#0f172a'}
                       onChange={(e) => setEpisodeBgColor(e.target.value)}
-                      title="Badge နောက်ခံ အရောင်"
+                      title="Badge Background Color"
                       className="w-7 h-7 rounded-lg border border-slate-700 cursor-pointer bg-transparent"
                     />
                   </div>
@@ -2391,7 +2482,7 @@ interface AudiobookQueueItem {
                     YouTube Thumbnail Studio
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    16:9 (1920×1080) Full HD Compositions ၆ မျိုး
+                    6 High-CTR (1920×1080) Full HD Layouts
                   </span>
                 </div>
               </div>
@@ -2410,13 +2501,13 @@ interface AudiobookQueueItem {
             {expandedSections.thumbnail && (
               <div className="space-y-4 pt-2 border-t border-slate-800/80">
                 <p className="text-[11px] text-slate-300 leading-relaxed">
-                  လက်ရှိ Video ၏ ဇာတ်ကောင်ကာဗာ၊ ခေါင်းစဉ်၊ စာရေးသူနှင့် အရောင်များကို အလိုအလျောက်ချိတ်ဆက်ပြီး YouTube CTR အမြင့်ဆုံးရရှိစေမည့် Action / Cinematic Compositions ၆ မျိုးမှ စိတ်ကြိုက်ရွေးချယ်နိုင်ပါသည်။
+                  Automatically syncs current book cover, title, author, and color schemes with 6 high-converting YouTube layouts.
                 </p>
 
                 {/* 6 Layout Selector Cards */}
                 <div className="space-y-2">
                   <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                    Thumbnail Compositions (၆ မျိုးမှ ရွေးချယ်ပါ):
+                    Select Thumbnail Layout (6 Presets):
                   </label>
                   <div className="grid grid-cols-1 gap-2">
                     {THUMBNAIL_LAYOUT_OPTIONS.map((layout) => {
@@ -2447,14 +2538,19 @@ interface AudiobookQueueItem {
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
                               <span className={`text-xs font-bold truncate ${isSelected ? 'text-white' : 'text-slate-200'}`}>
-                                {layout.labelMm}
+                                {layout.labelEn}
                               </span>
                               <span className="text-[10px] font-mono text-amber-300/80 ml-2 shrink-0">
-                                {layout.labelEn}
+                                Preset #{layout.badge}
                               </span>
                             </div>
                             <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
-                              {layout.descMm}
+                              {layout.id === 'layout-1-split' && 'Left 3D hero book cover with luminous glowing typography on the right.'}
+                              {layout.id === 'layout-2-center' && 'Centered large book cover framed by top cinematic header and bottom badges.'}
+                              {layout.id === 'layout-3-editorial' && 'Full right-side magazine artwork cover with editorial typographic hierarchy.'}
+                              {layout.id === 'layout-4-isometric' && 'Angled 3D book perspective with realistic reflections and golden badges.'}
+                              {layout.id === 'layout-5-bold' && 'Bold, high-visibility headline banner optimized for mobile YouTube feeds.'}
+                              {layout.id === 'layout-6-action' && 'High-contrast dynamic rays, punchy bold title, and intense book presentation.'}
                             </p>
                           </div>
                           {isSelected && (
@@ -2482,7 +2578,7 @@ interface AudiobookQueueItem {
                         }}
                         className="rounded border-slate-700 bg-slate-900 text-rose-500 focus:ring-rose-500/30 w-4 h-4"
                       />
-                      <span>🖼️ Thumbnail သီးသန့် Size & Color ချိန်ညှိမည်</span>
+                      <ImageIcon className="w-3.5 h-3.5 text-rose-400 inline mr-1.5" /><span>Customize Thumbnail Font Sizes & Colors</span>
                     </label>
 
                     {useCustomThumbStyles && (
@@ -2503,7 +2599,7 @@ interface AudiobookQueueItem {
                       {/* Thumbnail Header Font Size */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-slate-300">
-                          <span>ခေါင်းစဉ် စာလုံးအရွယ်အစား:</span>
+                          <span>Title Font Size:</span>
                           <span className="font-mono text-rose-400 font-bold">{thumbHeaderFontSize}px</span>
                         </div>
                         <input
@@ -2520,7 +2616,7 @@ interface AudiobookQueueItem {
                       {/* Thumbnail Subheader Font Size */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-slate-300">
-                          <span>အောက်ခေါင်းစဉ် စာလုံးအရွယ်အစား:</span>
+                          <span>Subtitle Font Size:</span>
                           <span className="font-mono text-amber-400 font-bold">{thumbSubheaderFontSize}px</span>
                         </div>
                         <input
@@ -2537,7 +2633,7 @@ interface AudiobookQueueItem {
                       {/* Thumbnail Author Font Size */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-slate-300">
-                          <span>စာရေးသူ စာလုံးအရွယ်အစား:</span>
+                          <span>Author Font Size:</span>
                           <span className="font-mono text-sky-400 font-bold">{thumbAuthorFontSize}px</span>
                         </div>
                         <input
@@ -2554,7 +2650,7 @@ interface AudiobookQueueItem {
                       {/* Thumbnail Episode Font Size */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-slate-300">
-                          <span>အစအဆုံး တံဆိပ် စာလုံးအရွယ်အစား:</span>
+                          <span>Episode Badge Font Size:</span>
                           <span className="font-mono text-emerald-400 font-bold">{thumbEpisodeFontSize}px</span>
                         </div>
                         <input
@@ -2571,7 +2667,7 @@ interface AudiobookQueueItem {
                       {/* Quick Color Overrides for Thumbnail */}
                       <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/80">
                         <div className="space-y-1">
-                          <label className="text-[10px] text-slate-400">ခေါင်းစဉ်အရောင် (Title Color)</label>
+                          <label className="text-[10px] text-slate-400">Title Color</label>
                           <div className="flex items-center gap-1.5">
                             <input
                               type="color"
@@ -2586,7 +2682,7 @@ interface AudiobookQueueItem {
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-[10px] text-slate-400">စာရေးသူအရောင် (Author Color)</label>
+                          <label className="text-[10px] text-slate-400">Author Color</label>
                           <div className="flex items-center gap-1.5">
                             <input
                               type="color"
@@ -2616,7 +2712,7 @@ interface AudiobookQueueItem {
                     }`}
                   >
                     <Layers className="w-3.5 h-3.5" />
-                    <span>{activePreviewMode === 'thumbnail' ? '🎬 Switch to Video' : '👁️ Preview 16:9'}</span>
+                    <span>{activePreviewMode === 'thumbnail' ? 'Switch to Video' : 'Preview 16:9'}</span>
                   </button>
 
                   <button
@@ -2633,7 +2729,7 @@ interface AudiobookQueueItem {
                     ) : (
                       <>
                         <Download className="w-3.5 h-3.5" />
-                        <span>⚡ Save 1080p Full HD PNG</span>
+                        <span>Save 1080p Full HD PNG</span>
                       </>
                     )}
                   </button>
@@ -2669,7 +2765,7 @@ interface AudiobookQueueItem {
                     {thumbnailToast.status === 'success' && thumbnailToast.filePath && (
                       <div className="space-y-1.5 pt-1 border-t border-emerald-500/20">
                         <div className="text-[10px] font-mono text-emerald-300/80 truncate">
-                          📁 {thumbnailToast.filePath}
+                          {thumbnailToast.filePath}
                         </div>
                         <div className="flex items-center gap-2">
                           <button
@@ -2678,7 +2774,7 @@ interface AudiobookQueueItem {
                             className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition-all"
                           >
                             <FolderOpen className="w-3 h-3" />
-                            <span>Folder ထဲတွင် ဖွင့်မည်</span>
+                            <span>Reveal in Folder</span>
                           </button>
                           {thumbnailToast.downloadUrl && (
                             <a
@@ -2687,7 +2783,7 @@ interface AudiobookQueueItem {
                               className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 font-bold text-[11px] flex items-center gap-1 border border-slate-700 transition-all"
                             >
                               <Download className="w-3 h-3" />
-                              <span>PNG ဒေါင်းလုဒ်</span>
+                              <span>Download PNG</span>
                             </a>
                           )}
                         </div>
@@ -2716,13 +2812,13 @@ interface AudiobookQueueItem {
                     Background Video Loops
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    20s Ping-Pong ရုပ်ထွက်ဗီဒီယိုများ (လိုမှဖွင့်ရန်)
+                    Seamless 20s Ambient Loops
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-[11px] font-bold text-slate-300 hidden sm:inline truncate max-w-[130px]">
-                  {bgVideoUrl ? 'Custom Video' : currentTheme.nameMm}
+                  {bgVideoUrl ? 'Custom Video' : currentTheme.nameEn}
                 </span>
                 {expandedSections.videoPresets ? (
                   <ChevronUp className="w-4 h-4 text-slate-400" />
@@ -2735,7 +2831,7 @@ interface AudiobookQueueItem {
             {expandedSections.videoPresets && (
               <div className="space-y-3 pt-2 border-t border-slate-800/80">
                 <p className="text-[11px] text-slate-400">
-                  ဗီဒီယို speed ကို ညင်သာစွာလျှော့ချထားပြီး [Original Forward + Reverse] အပြန်အလှန် ပေါင်းစပ်ထားသောကြောင့် စက္ကန့် ၂၀ ပြည့်သည်နှင့် မူလအစသို့ အတိအကျ ပြန်လည်ချောမွေ့စွာ (Seamless Ping-Pong) လည်ပတ်ပါမည်။
+                  Slowed motion combined with seamless forward + reverse ping-pong for an infinite, smooth ambient video loop.
                 </p>
 
                 {/* Custom Video & Stock Video Downloader Section */}
@@ -2743,7 +2839,7 @@ interface AudiobookQueueItem {
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
                       <VideoIcon className="w-4 h-4 text-indigo-400" />
-                      Custom Video Loop (စက်ထဲမှ MP4 သို့မဟုတ် Pexels/Pixabay Link):
+                      Custom Video Loop (Local MP4 or Pexels/Pixabay URL):
                     </span>
                     {bgVideoUrl && (
                       <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
@@ -2793,7 +2889,7 @@ interface AudiobookQueueItem {
                   <div className="pt-2 border-t border-indigo-500/20 space-y-1.5">
                     <span className="text-[11px] text-indigo-300 font-semibold flex items-center gap-1">
                       <Download className="w-3.5 h-3.5 text-indigo-400" />
-                      🌐 Stock Video Link (Pexels / Pixabay / YouTube / MP4 Link):
+                      Stock / Web Video URL (Pexels / Pixabay / Direct MP4):
                     </span>
                     <div className="flex gap-2">
                       <input
@@ -2801,7 +2897,7 @@ interface AudiobookQueueItem {
                         value={stockVideoUrlInput}
                         onChange={(e) => setStockVideoUrlInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleDownloadStockVideo()}
-                        placeholder="https://www.pexels.com/video/... သို့မဟုတ် direct mp4 link"
+                        placeholder="https://www.pexels.com/video/... or direct MP4 URL"
                         className="flex-1 px-3 py-2 text-xs bg-slate-950 border border-indigo-500/30 rounded-xl text-slate-200 font-mono focus:outline-none focus:border-indigo-400"
                       />
                       <button
@@ -2813,7 +2909,7 @@ interface AudiobookQueueItem {
                         {isDownloadingStockVideo ? (
                           <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            <span>ဒေါင်းလုဒ်ဆွဲနေသည်...</span>
+                            <span>Downloading audio...</span>
                           </>
                         ) : (
                           <>
@@ -2846,7 +2942,7 @@ interface AudiobookQueueItem {
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-indigo-200 flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                        <span>ဒေါင်းလုဒ်လုပ်ထားသော Background Presets ({customBgPresets.length})</span>
+                        <span>Saved Custom Background Presets ({customBgPresets.length})</span>
                       </span>
                       <span className="text-[10px] text-indigo-300 font-mono bg-indigo-500/20 px-2 py-0.5 rounded-md">
                         Saved in Project
@@ -2870,12 +2966,12 @@ interface AudiobookQueueItem {
                             }`}
                           >
                             <div className="flex items-center gap-2 min-w-0 flex-1">
-                              <div className="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-sm flex-shrink-0">
-                                🎬
+                              <div className="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-indigo-300 flex-shrink-0">
+                                <Film className="w-4 h-4" />
                               </div>
                               <div className="min-w-0 flex-1">
                                 <div className="text-xs font-bold truncate text-slate-100">
-                                  {preset.nameMm}
+                                  {preset.nameEn || preset.nameMm}
                                 </div>
                                 <div className="text-[10px] text-slate-400 font-mono truncate">
                                   20s Seamless Loop • {preset.nameEn}
@@ -2892,7 +2988,7 @@ interface AudiobookQueueItem {
                               <button
                                 type="button"
                                 onClick={(e) => handleDeleteCustomBgPreset(preset.id, e)}
-                                title="Preset ဖျက်ရန်"
+                                title="Delete Preset"
                                 className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all opacity-0 group-hover:opacity-100"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -2935,11 +3031,11 @@ interface AudiobookQueueItem {
                         </div>
 
                         <div className="text-xs font-bold text-slate-100 truncate">
-                          {theme.nameMm}
+                          {theme.nameEn}
                         </div>
 
                         <div className="text-[10px] text-slate-400 mt-1 line-clamp-1">
-                          {theme.genreSuggestionMm}
+                          {theme.nameEn}
                         </div>
                       </button>
                     );
@@ -2966,7 +3062,7 @@ interface AudiobookQueueItem {
                     Background Gradients & Ambient
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    အရောင်စပ် Presets ({AUDIOBOOK_GRADIENT_PRESETS.length} မျိုး - လိုမှဖွင့်ရန်)
+                    {AUDIOBOOK_GRADIENT_PRESETS.length} Studio Gradients
                   </span>
                 </div>
               </div>
@@ -2978,7 +3074,7 @@ interface AudiobookQueueItem {
                   }}
                 />
                 <span className="text-[11px] font-bold text-slate-300 hidden sm:inline truncate max-w-[130px]">
-                  {AUDIOBOOK_GRADIENT_PRESETS.find((g) => g.id === selectedGradientId)?.nameMm}
+                  {AUDIOBOOK_GRADIENT_PRESETS.find((g) => g.id === selectedGradientId)?.nameEn || AUDIOBOOK_GRADIENT_PRESETS.find((g) => g.id === selectedGradientId)?.nameMm}
                 </span>
                 {expandedSections.gradients ? (
                   <ChevronUp className="w-4 h-4 text-slate-400" />
@@ -3001,7 +3097,7 @@ interface AudiobookQueueItem {
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    အားလုံး ({AUDIOBOOK_GRADIENT_PRESETS.length})
+                    All ({AUDIOBOOK_GRADIENT_PRESETS.length})
                   </button>
                   <button
                     type="button"
@@ -3013,7 +3109,7 @@ interface AudiobookQueueItem {
                     }`}
                   >
                     <Sun className="w-3.5 h-3.5" />
-                    ☀️ လင်းလက် (Light)
+                    Light
                   </button>
                   <button
                     type="button"
@@ -3025,7 +3121,7 @@ interface AudiobookQueueItem {
                     }`}
                   >
                     <Moon className="w-3.5 h-3.5" />
-                    🌙 နက်မှောင် (Dark)
+                    Dark
                   </button>
                 </div>
 
@@ -3048,10 +3144,10 @@ interface AudiobookQueueItem {
                           style={{ background: g.gradient }}
                         />
                         <div className="truncate text-xs font-semibold flex-1">
-                          {g.nameMm}
+                          {g.nameEn || g.nameMm}
                         </div>
                         <span className="text-[9px] px-1 py-0.5 rounded bg-slate-800 text-slate-400">
-                          {g.category === 'light' ? '☀️' : '🌙'}
+                          {g.category === 'light' ? 'Light' : 'Dark'}
                         </span>
                       </button>
                     );
@@ -3082,7 +3178,7 @@ interface AudiobookQueueItem {
                   }`}
                 >
                   <VideoIcon className="w-3.5 h-3.5" />
-                  <span>🎬 Video Loop ({resolution === '2k' ? '2K' : '1080p'})</span>
+                  <span>Video Loop ({resolution === '2k' ? '2K' : '1080p'})</span>
                 </button>
                 <button
                   type="button"
@@ -3094,7 +3190,7 @@ interface AudiobookQueueItem {
                   }`}
                 >
                   <ImageIcon className="w-3.5 h-3.5" />
-                  <span>🖼️ YouTube Thumbnail (16:9)</span>
+                  <span>YouTube Thumbnail (16:9)</span>
                 </button>
               </div>
 
@@ -3230,7 +3326,7 @@ interface AudiobookQueueItem {
             {activePreviewMode === 'video' ? (
               <div className="space-y-3 px-2 pt-1">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-slate-400">
-                  <span>💡 Full Screen ဖြင့် အသံဖိုင် အစအဆုံး နားဆင်နိုင်ပြီး Screen Record သို့မဟုတ် Live လွှင့်ရန် အသင့်တော်ဆုံး ဖြစ်ပါသည်။</span>
+                  <span>Full-screen interactive playback with accurate timeline and audio sync.</span>
                   <div className="flex items-center gap-3">
                     <span className="font-semibold text-amber-300">Loop: 20s Ping-Pong</span>
                     <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
@@ -3247,19 +3343,19 @@ interface AudiobookQueueItem {
                   {activeJob ? (
                     <>
                       <Plus className="w-4 h-4" />
-                      <span>➕ Queue သို့ နောက်တစ်ခု ထပ်တန်းစီမည် ({queueJobs.length + 1})</span>
+                      <span>Add to Queue ({queueJobs.length + 1})</span>
                     </>
                   ) : (
                     <>
                       <Download className="w-4 h-4" />
-                      <span>⚡ Fast Export {resolution.toUpperCase()} MP4 Video</span>
+                      <span>Start Fast Export ({resolution.toUpperCase()} MP4)</span>
                     </>
                   )}
                 </button>
               </div>
             ) : (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-slate-400 px-2 pt-1">
-                <span>🎯 YouTube 16:9 Thumbnail (1920×1080 Full HD) ကို Standard High-CTR Layout ဖြင့် တိုက်ရိုက်ထုတ်ယူနိုင်ပါသည်။</span>
+                <span>High-CTR 1080p Full HD thumbnail rendered with professional layout & typography.</span>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -3338,7 +3434,7 @@ interface AudiobookQueueItem {
                   type="button"
                   onClick={() => handleClearHistory()}
                   className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-rose-400 transition-colors"
-                  title="History အားလုံး ရှင်းလင်းမည်"
+                  title="Clear all history"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Clear All</span>
@@ -3391,7 +3487,7 @@ interface AudiobookQueueItem {
                         {activeJob.logs.map((log: string, idx: number) => (
                           <div key={idx} className="truncate">
                             <span className="text-emerald-400 select-none mr-1.5">›</span>
-                            <span className={log.includes('❌') ? 'text-rose-400' : (log.includes('🎉') || log.includes('Finished') || log.includes('saved')) ? 'text-emerald-300 font-semibold' : 'text-slate-300'}>
+                            <span className={(log.toLowerCase().includes('error') || log.toLowerCase().includes('failed')) ? 'text-rose-400' : (log.includes('Finished') || log.includes('saved') || log.includes('complete')) ? 'text-emerald-300 font-semibold' : 'text-slate-300'}>
                               {log}
                             </span>
                           </div>
@@ -3406,7 +3502,7 @@ interface AudiobookQueueItem {
                 {queueJobs.length > 0 && (
                   <div className="space-y-2">
                     <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-1">
-                      နောက်နောင် ဆက်တိုက် Export လုပ်မည့် စာရင်း ({queueJobs.length})
+                      Queued Jobs in Pipeline ({queueJobs.length})
                     </div>
                     {queueJobs.map((qJob, idx) => (
                       <div
@@ -3431,7 +3527,7 @@ interface AudiobookQueueItem {
                           <div className="min-w-0">
                             <h4 className="text-xs font-bold text-white truncate">{qJob.headerTitle}</h4>
                             <p className="text-[10px] text-slate-400 truncate">
-                              {qJob.authorName ? `စာရေးသူ: ${qJob.authorName}` : ''}
+                              {qJob.authorName ? `Author: ${qJob.authorName}` : ''}
                               {qJob.audioDurationSec ? ` • ${formatDuration(qJob.audioDurationSec)}` : ''}
                               {` • ${qJob.resolution.toUpperCase()}`}
                             </p>
@@ -3442,7 +3538,7 @@ interface AudiobookQueueItem {
                           type="button"
                           onClick={() => handleCancelQueueItem(qJob.id)}
                           className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-colors shrink-0"
-                          title="Queue ထဲမှ ဖယ်ထုတ်မည်"
+                          title="Remove from Queue"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -3462,7 +3558,7 @@ interface AudiobookQueueItem {
                       <div className="flex items-center gap-2">
                         <span className={`w-2.5 h-2.5 rounded-full ${historyJobs[0].status === 'failed' ? 'bg-rose-400' : 'bg-emerald-400'}`} />
                         <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                          <span>{historyJobs[0].status === 'failed' ? '❌ Export မအောင်မြင်ပါ:' : '🎉 ပြီးစီးခဲ့သော ဗီဒီယို:'}</span>
+                          <span>{historyJobs[0].status === 'failed' ? 'Export Failed:' : 'Completed Video:'}</span>
                           <span className="text-slate-200 normal-case">{historyJobs[0].headerTitle}</span>
                         </span>
                       </div>
@@ -3483,7 +3579,7 @@ interface AudiobookQueueItem {
                         {historyJobs[0].logs.map((log: string, idx: number) => (
                           <div key={idx} className="truncate">
                             <span className="text-emerald-400 select-none mr-1.5">›</span>
-                            <span className={log.includes('❌') ? 'text-rose-400' : (log.includes('🎉') || log.includes('Finished') || log.includes('saved')) ? 'text-emerald-300 font-semibold' : 'text-slate-300'}>
+                            <span className={(log.toLowerCase().includes('error') || log.toLowerCase().includes('failed')) ? 'text-rose-400' : (log.includes('Finished') || log.includes('saved') || log.includes('complete')) ? 'text-emerald-300 font-semibold' : 'text-slate-300'}>
                               {log}
                             </span>
                           </div>
@@ -3497,9 +3593,9 @@ interface AudiobookQueueItem {
                 {!activeJob && queueJobs.length === 0 && historyJobs.length === 0 && (
                   <div className="p-8 text-center space-y-2">
                     <ListOrdered className="w-8 h-8 text-slate-600 mx-auto" />
-                    <p className="text-xs font-bold text-slate-400">Queue တွင် စောင့်ဆိုင်းနေသော အလုပ်မရှိပါ</p>
+                    <p className="text-xs font-bold text-slate-400">No Pending Jobs in Queue</p>
                     <p className="text-[11px] text-slate-500 max-w-sm mx-auto">
-                      Audiobook များကို တစ်ခုပြီးတစ်ခု တန်းစီထုတ်လုပ်နိုင်ပါသည်။ အပေါ်ရှိ &quot;⚡ Fast Export&quot; သို့မဟုတ် &quot;➕ Queue&quot; ခလုတ်ကို နှိပ်၍ အကန့်အသတ်မရှိ စာရင်းသွင်းနိုင်ပါသည်။
+                      Batch render audiobooks seamlessly. Click "Start Fast Export" or "Add to Queue" above to queue multiple production jobs.
                     </p>
                   </div>
                 )}
@@ -3531,7 +3627,7 @@ interface AudiobookQueueItem {
                           <div className="min-w-0">
                             <h4 className="text-xs font-bold text-white truncate">{item.headerTitle}</h4>
                             <p className="text-[11px] text-slate-400 truncate">
-                              {item.subheader || ''} {item.authorName ? `• စာရေးသူ: ${item.authorName}` : ''}
+                              {item.subheader || ''} {item.authorName ? `• Author: ${item.authorName}` : ''}
                             </p>
                             <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-400">
                               {item.status === 'failed' ? (
@@ -3569,7 +3665,7 @@ interface AudiobookQueueItem {
                           type="button"
                           onClick={() => handleClearHistory(item.id)}
                           className="p-1 rounded-lg text-slate-600 hover:text-rose-400 transition-colors shrink-0"
-                          title="History မှ ဖျက်မည်"
+                          title="Delete from History"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -3591,7 +3687,7 @@ interface AudiobookQueueItem {
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] shadow-sm transition-all cursor-pointer"
                           >
                             <Folder className="w-3.5 h-3.5" />
-                            Finder တွင် ဖွင့်ရန်
+                            Reveal in Finder
                           </button>
                         )}
                         {item.localFilePath && (
@@ -3601,7 +3697,7 @@ interface AudiobookQueueItem {
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow-sm transition-all cursor-pointer"
                           >
                             <Play className="w-3.5 h-3.5" />
-                            ဗီဒီယို ကြည့်ရန်
+                            Play Video
                           </button>
                         )}
                         {item.downloadUrl && (
@@ -3620,9 +3716,9 @@ interface AudiobookQueueItem {
                 ) : (
                   <div className="p-8 text-center space-y-2">
                     <History className="w-8 h-8 text-slate-600 mx-auto" />
-                    <p className="text-xs font-bold text-slate-400">History မရှိသေးပါ</p>
+                    <p className="text-xs font-bold text-slate-400">No History Yet</p>
                     <p className="text-[11px] text-slate-500">
-                      ထုတ်လုပ်ပြီးစီးသွားသော ဗီဒီယိုများကို ဤနေရာတွင် တိုက်ရိုက် ပြန်လည်ကြည့်ရှုနိုင်မည် ဖြစ်ပါသည်။
+                      Completed videos will appear here for instant preview and download.
                     </p>
                   </div>
                 )}

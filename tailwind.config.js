@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['PannYeat', 'Padauk', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        'pann-yeat': ['PannYeat', 'Padauk', 'sans-serif'],
+      },
       colors: {
         brand: {
           50: '#eef2ff',
