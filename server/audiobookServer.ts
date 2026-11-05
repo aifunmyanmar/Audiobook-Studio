@@ -2433,25 +2433,27 @@ Respond ONLY with a JSON object:
               }
 
               if (!imageBuffer) {
-                const cfAccountId = 'ea575a814075a426f26927a3e761d800';
-                const cfApiToken = 'cfut_ApUJ9vyacha7ZJEQEzt0AoyKBW7GHiYIsvFMeu8E8544a95e';
-                try {
-                  const cfRes = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cfAccountId}/ai/run/@cf/black-forest-labs/flux-1-schnell`, {
-                    method: 'POST',
-                    headers: {
-                      'Authorization': `Bearer ${cfApiToken}`,
-                      'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ prompt: `vertical 3:4 portrait book cover, ${finalAnimePrompt}` })
-                  });
-                  if (cfRes.ok) {
-                    const cfJson = await cfRes.json();
-                    if (cfJson.result?.image) {
-                      imageBuffer = Buffer.from(cfJson.result.image, 'base64');
+                const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+                const cfApiToken = process.env.CLOUDFLARE_AI_TOKEN || '';
+                if (cfAccountId && cfApiToken) {
+                  try {
+                    const cfRes = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cfAccountId}/ai/run/@cf/black-forest-labs/flux-1-schnell`, {
+                      method: 'POST',
+                      headers: {
+                        'Authorization': `Bearer ${cfApiToken}`,
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ prompt: `vertical 3:4 portrait book cover, ${finalAnimePrompt}` })
+                    });
+                    if (cfRes.ok) {
+                      const cfJson = await cfRes.json();
+                      if (cfJson.result?.image) {
+                        imageBuffer = Buffer.from(cfJson.result.image, 'base64');
+                      }
                     }
+                  } catch (cfErr) {
+                    console.warn('[Cloudflare FLUX error]', cfErr);
                   }
-                } catch (cfErr) {
-                  console.warn('[Cloudflare FLUX error]', cfErr);
                 }
               }
 
