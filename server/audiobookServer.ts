@@ -651,6 +651,10 @@ export function audiobookServerPlugin(): Plugin {
             .replace(/[/\\:*?"<>|]/g, '')
             .trim();
           if (!cleanBaseTitle) cleanBaseTitle = 'Audiobook';
+          // Ensure filename length does not exceed filesystem limit (APFS/NTFS max 255 bytes)
+          if (cleanBaseTitle.length > 50) {
+            cleanBaseTitle = cleanBaseTitle.substring(0, 50).trim();
+          }
 
           ensureAudiobookDirs();
           let userTargetFilename = `${cleanBaseTitle}.mp4`;
@@ -664,13 +668,16 @@ export function audiobookServerPlugin(): Plugin {
             userDownloadPath = path.join(USER_VIDEOS_DIR, userTargetFilename);
           }
 
-          const webOutputFilename = `Audiobook_${Date.now()}_${encodeURIComponent(cleanBaseTitle.substring(0, 30))}.mp4`;
+          // Use raw safe title without encodeURI to avoid ENAMETOOLONG on disk (which caused FFmpeg exit code 193)
+          const webSafeTitle = cleanBaseTitle.replace(/[/\\:*?"<>|]/g, '_').trim();
+          const webOutputFilename = `Audiobook_${Date.now()}_${webSafeTitle || job.id}.mp4`;
           const finalOutputPath = path.join(publicDownloadsDir, webOutputFilename);
           const ffmpegPath = getFfmpegPath();
 
           await new Promise<void>((resolve, reject) => {
             const ffmpegArgs = [
               '-y',
+              '-fflags', '+genpts',
               '-stream_loop', '-1',
               '-i', tempLoopPath,
               '-i', audioFilePath,
@@ -678,7 +685,7 @@ export function audiobookServerPlugin(): Plugin {
               '-map', '1:a:0',
               '-c:v', 'copy',
               '-c:a', 'aac',
-              '-b:a', '320k',
+              '-b:a', '192k',
               '-shortest',
               '-movflags', '+faststart',
               '-progress', 'pipe:1',
@@ -687,6 +694,7 @@ export function audiobookServerPlugin(): Plugin {
 
             const child = spawn(ffmpegPath, ffmpegArgs);
             let lastReportedSec = 0;
+            let ffmpegStderr = '';
 
             child.stdout.on('data', (chunk: Buffer) => {
               const text = chunk.toString();
@@ -716,10 +724,26 @@ export function audiobookServerPlugin(): Plugin {
               }
             });
 
-            child.stderr.on('data', () => {});
+            child.stderr.on('data', (chunk: Buffer) => {
+              const text = chunk.toString();
+              ffmpegStderr += text;
+              if (ffmpegStderr.length > 10000) {
+                ffmpegStderr = ffmpegStderr.slice(-8000);
+              }
+            });
+
             child.on('close', (code) => {
-              if (code === 0) resolve();
-              else reject(new Error(`FFmpeg muxing exited with code ${code}`));
+              if (code === 0) {
+                resolve();
+              } else {
+                const errorSnippet = ffmpegStderr
+                  .split('\n')
+                  .map(s => s.trim())
+                  .filter((l) => l && !l.startsWith('frame=') && !l.startsWith('built with') && !l.startsWith('configuration:') && !l.startsWith('libav'))
+                  .slice(-5)
+                  .join(' | ');
+                reject(new Error(`FFmpeg muxing exited with code ${code}${errorSnippet ? `: ${errorSnippet}` : ''}`));
+              }
             });
             child.on('error', (err) => reject(err));
           });
@@ -752,7 +776,7 @@ export function audiobookServerPlugin(): Plugin {
           job.progress = 100;
           job.outputPath = finalOutputPath;
           job.localFilePath = finalLocalPath;
-          job.downloadUrl = `/downloads/${webOutputFilename}`;
+          job.downloadUrl = `/downloads/${encodeURIComponent(webOutputFilename)}`;
           job.fileSizeBytes = fs.statSync(finalOutputPath).size;
           job.statusMessage = `Completed! Saved to Downloads/Audiobook/Audiobook/${path.basename(userDownloadPath)} (${finalSizeMb} MB).`;
           console.log(`[Audiobook Queue] 🎉 Render finished! File: ${finalLocalPath} (${finalSizeMb} MB)`);
