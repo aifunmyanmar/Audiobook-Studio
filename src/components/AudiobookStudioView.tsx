@@ -1144,6 +1144,21 @@ interface AudiobookQueueItem {
       message: 'Generating 1080p Full HD YouTube Thumbnail PNG...',
     });
     try {
+      let resolvedArtForThumb = artworkUrl || artworkPathInput || '';
+      if (resolvedArtForThumb.startsWith('blob:')) {
+        try {
+          const blobRes = await fetch(resolvedArtForThumb);
+          const blobData = await blobRes.blob();
+          resolvedArtForThumb = await new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve((reader.result as string) || '');
+            reader.readAsDataURL(blobData);
+          });
+        } catch (e) {
+          console.warn('Could not convert blob to base64 for thumbnail:', e);
+        }
+      }
+
       const payload = {
         layoutId: selectedThumbnailLayout,
         headerTitle,
@@ -1154,7 +1169,7 @@ interface AudiobookQueueItem {
         subheaderFontSize: thumbSubheaderFontSize,
         authorFontSize: thumbAuthorFontSize,
         episodeFontSize: thumbEpisodeFontSize,
-        artworkUrl,
+        artworkUrl: resolvedArtForThumb,
         artworkShape,
         themeId: selectedThemeId,
         gradientId: selectedGradientId,

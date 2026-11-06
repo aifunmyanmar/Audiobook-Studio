@@ -168,7 +168,7 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
   const bgStyle = customGradient || matchedGradientPreset?.gradient || theme.gradientBg;
 
   const resolvedArtwork = artworkUrl
-    ? artworkUrl.startsWith('data:') || artworkUrl.startsWith('http') || artworkUrl.startsWith('blob:') || artworkUrl.startsWith('/api/')
+    ? artworkUrl.startsWith('data:') || artworkUrl.startsWith('http') || artworkUrl.startsWith('blob:') || artworkUrl.startsWith('/')
       ? artworkUrl
       : staticFile(artworkUrl.replace(/^\//, ''))
     : null;

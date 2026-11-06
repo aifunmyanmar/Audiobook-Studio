@@ -1853,6 +1853,16 @@ export function audiobookServerPlugin(): Plugin {
                 frame: 0,
                 output: webOutputPath,
                 imageFormat: 'png',
+                browserExecutable: chromeExecutable || undefined,
+                chromiumOptions: {
+                  args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-web-security',
+                    '--disable-features=IsolateOrigins,site-per-process',
+                  ],
+                },
               });
 
               try {
