@@ -196,6 +196,7 @@ export function audiobookServerPlugin(): Plugin {
           authorFontSize?: number;
           episodeFontSize?: number;
           videoCompositionId?: string;
+          concurrency?: string | number;
           status: 'pending' | 'rendering' | 'completed' | 'failed' | 'cancelled';
           progress: number;
           statusMessage: string;
@@ -605,13 +606,24 @@ export function audiobookServerPlugin(): Plugin {
           appendLog(`Encoding 600 frames (20-second ping-pong seamless loop) with lossless PNG frames...`);
 
           // 4. Render Remotion 20s Loop with LOSSLESS PNG frames
+          const totalCores = os.cpus().length || 4;
+          const rawConcurrency = job.concurrency || (is2K ? '40%' : '50%');
+          const concurrencySetting = typeof rawConcurrency === 'string' && rawConcurrency.endsWith('%')
+            ? rawConcurrency
+            : (typeof rawConcurrency === 'number' ? Math.max(1, Math.min(totalCores, Math.floor(rawConcurrency))) : (is2K ? '40%' : '50%'));
+          const resolvedCores = typeof concurrencySetting === 'string' && concurrencySetting.endsWith('%')
+            ? Math.max(1, Math.floor((parseInt(concurrencySetting, 10) / 100) * totalCores))
+            : (typeof concurrencySetting === 'number' ? concurrencySetting : Math.max(1, Math.floor(totalCores * 0.5)));
+
+          appendLog(`Remotion concurrency: ${concurrencySetting} (${resolvedCores} of ${totalCores} CPU cores allocated, leaving ${totalCores - resolvedCores} cores free for other users)`);
+
           let lastLoggedMilestone = 0;
           await renderMedia({
             composition,
             serveUrl: bundleLocation,
             codec: 'h264',
             imageFormat: 'png',
-            concurrency: is2K ? 4 : 6,
+            concurrency: concurrencySetting,
             timeoutInMilliseconds: 150000,
             chromiumOptions: {
               args: [
@@ -930,6 +942,7 @@ export function audiobookServerPlugin(): Plugin {
                 authorFontSize: payload.authorFontSize,
                 episodeFontSize: payload.episodeFontSize,
                 videoCompositionId: payload.videoCompositionId || 'video-comp-1-classic',
+                concurrency: payload.concurrency || (payload.resolution === '2k' ? '40%' : '50%'),
                 status: 'pending',
                 progress: 0,
                 statusMessage: 'Queued for rendering...',

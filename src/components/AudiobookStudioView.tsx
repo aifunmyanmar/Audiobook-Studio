@@ -56,6 +56,7 @@ import {
   ChevronDown,
   ChevronUp,
   Layers,
+  Cpu,
 } from 'lucide-react';
 
 interface AudiobookStudioViewProps {
@@ -129,6 +130,7 @@ interface SavedAudiobookSettings {
   thumbEpisodeBgColor?: string;
   selectedThumbnailLayout?: AudiobookThumbnailLayoutId;
   selectedVideoComposition?: AudiobookVideoCompositionId;
+  concurrencyPercent?: string;
   generatedAnimeResult?: {
     imageUrl: string;
     imagePath: string;
@@ -160,6 +162,9 @@ export const AudiobookStudioView: React.FC<AudiobookStudioViewProps> = ({ onBack
 
   // Resolution state (1080p Full HD vs 2K QHD 1440p)
   const [resolution, setResolution] = useState<'1080p' | '2k'>(initialSettings.resolution ?? '1080p');
+
+  // Concurrency percentage state ('25%' | '50%' | '75%' | '100%') - default 50% for smooth shared usage
+  const [concurrencyPercent, setConcurrencyPercent] = useState<string>(initialSettings.concurrencyPercent ?? '50%');
 
   // Sliders for dynamic custom sizing for ALL text & artwork
   const [headerFontSize, setHeaderFontSize] = useState<number>(initialSettings.headerFontSize ?? 72);
@@ -453,6 +458,7 @@ interface AudiobookQueueItem {
         thumbEpisodeBgColor,
         selectedThumbnailLayout,
         selectedVideoComposition,
+        concurrencyPercent,
         generatedAnimeResult,
         webAudioUrlInput,
         geminiApiKey,
@@ -504,6 +510,7 @@ interface AudiobookQueueItem {
     thumbEpisodeBgColor,
     selectedThumbnailLayout,
     selectedVideoComposition,
+    concurrencyPercent,
     generatedAnimeResult,
     webAudioUrlInput,
     geminiApiKey,
@@ -942,6 +949,7 @@ interface AudiobookQueueItem {
     setSelectedGradientId('bright-morning-gold');
     setSelectedThemeId('horror-halloween');
     setGradientCategory('all');
+    setConcurrencyPercent('50%');
   };
 
   const formatDuration = (sec: number) => {
@@ -1039,6 +1047,7 @@ interface AudiobookQueueItem {
       episodeTextColor,
       episodeBgColor,
       videoCompositionId: selectedVideoComposition,
+      concurrency: concurrencyPercent || '50%',
     };
 
     try {
@@ -1359,6 +1368,35 @@ interface AudiobookQueueItem {
               <Sparkles className="w-3 h-3 text-amber-200" />
               2K QHD
             </button>
+          </div>
+
+          {/* CPU / Concurrency Percentage Selector (Ensures other users remain unblocked) */}
+          <div className="flex items-center bg-slate-900 border border-slate-700/80 rounded-2xl p-1 gap-1 shadow-md">
+            <div className="px-2 py-1 text-[11px] font-bold text-slate-400 flex items-center gap-1 select-none">
+              <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+              <span>CPU:</span>
+            </div>
+            {(['25%', '50%', '75%'] as const).map((pct) => (
+              <button
+                key={pct}
+                type="button"
+                onClick={() => setConcurrencyPercent(pct)}
+                title={
+                  pct === '25%'
+                    ? '25% CPU Cores - Eco mode, maximum free resources for other users'
+                    : pct === '50%'
+                    ? '50% CPU Cores (Recommended) - Half of CPU cores, smooth export without freezing other users'
+                    : '75% CPU Cores - Fast mode, allocates more cores when server is idle'
+                }
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  concurrencyPercent === pct
+                    ? 'bg-cyan-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {pct}
+              </button>
+            ))}
           </div>
 
           <button

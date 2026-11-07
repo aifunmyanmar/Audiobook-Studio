@@ -806,9 +806,9 @@ export const AudiobookThumbnailComposition: React.FC<AudiobookThumbnailProps> = 
                       fontWeight: 600,
                       color: subheaderColor,
                       margin: '6px 0 0 0',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
+                      whiteSpace: 'pre-line',
+                      wordBreak: 'break-word',
+                      lineHeight: '1.35',
                     }}
                   >
                     {subheader}
